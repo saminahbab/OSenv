@@ -93,3 +93,15 @@
   :ensure t
   :after (rjsx-mode)
   :hook (rjsx-mode . prettier-js-mode))
+
+
+;; smart parents
+(use-package smartparens)
+(use-package smartparens-config
+  :hook ((after-init . smartparens-global-mode))
+  :init (gsetq sp-hybrid-kill-entire-symbol nil))
+
+;; rainbowdelimiters 
+(use-package rainbow-delimiters
+  :defer t
+  :ghook '(prog-mode-hook text-mode-hook org-src-mode-hook))

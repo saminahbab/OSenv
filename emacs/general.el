@@ -7,7 +7,6 @@
 (setq backup-directory-alist '(("." . "~/.saves")))
 
 ;; highlight line that you are on
-(gobal-hl-line-mode +1)
 (show-paren-mode 1)
 
 ;; yes-or-no
@@ -37,10 +36,6 @@
   (setq company-idle-delay 0)
   (setq company-minimum-prefix-length 1))
 
-(use-package 'yasnippet :ensure t
-  :init (yas-global-mode 1))
-(use-package yasnippet-snippets
-  :ensure t)
 
 (use-package counsel
   :config
@@ -121,12 +116,54 @@
   :init
   )
 
-(use-package company-lsp
-  :ensure t
-  :commands company-lsp)
-
-(setq lsp-ui-doc-enable nil
+(setq lsp-ui-doc-enable t
       lsp-ui-peek-enable t
       lsp-ui-sideline-enable t
       lsp-ui-imenu-enable t
-      lsp-ui-flycheck-enable t)
+      lsp-ui-flycheck-enable t
+      lsp-ui-sideline-toggle-symbols-info t)
+
+;; yasnippet
+(use-package yasnippet
+  :ensure t
+  :init
+  (yas-global-mode 1)
+  :config
+  (use-package yasnippet-snippets :ensure t )
+  (yas-reload-all))
+
+;; yasnippet conflicts between company and Yasnippet
+  (defun check-expansion ()
+    (save-excursion
+      (if (looking-at "\\_>") t
+        (backward-char 1)
+        (if (looking-at "\\.") t
+          (backward-char 1)
+          (if (looking-at "->") t nil)))))
+
+  (defun do-yas-expand ()
+    (let ((yas/fallback-behavior 'return-nil))
+      (yas/expand)))
+
+  (defun tab-indent-or-complete ()
+    (interactive)
+    (if (minibufferp)
+        (minibuffer-complete)
+      (if (or (not yas/minor-mode)
+              (null (do-yas-expand)))
+          (if (check-expansion)
+              (company-complete-common)
+            (indent-for-tab-command)))))
+
+  (global-set-key [tab] 'tab-indent-or-complete)
+
+;; terminal
+(setq-default
+ shell-file-name "/bin/zsh")
+
+
+;; lsp tuning
+(setq gc-cons-threshold 200000000)
+(setq read-process-output-max ( * 1024 1024) )
+(setq lsp-prefer-capf t)
+
