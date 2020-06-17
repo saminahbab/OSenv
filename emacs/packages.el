@@ -1,3 +1,4 @@
+
 (require 'package)
 
 (add-to-list 'package-archives
@@ -36,7 +37,7 @@
     lsp-ui
 
     ;; Python
-    elpy
+    ein
     
     ;; Go    
     go-mode
@@ -99,9 +100,12 @@
 (use-package smartparens)
 (use-package smartparens-config
   :hook ((after-init . smartparens-global-mode))
-  :init (gsetq sp-hybrid-kill-entire-symbol nil))
+  :init (setq sp-hybrid-kill-entire-symbol nil))
 
 ;; rainbowdelimiters 
 (use-package rainbow-delimiters
   :defer t
-  :ghook '(prog-mode-hook text-mode-hook org-src-mode-hook))
+  :hook '(prog-mode-hook text-mode-hook org-src-mode-hook))
+
+;; follow symlinked files to origin
+(setq find-file-visit-truename t)
