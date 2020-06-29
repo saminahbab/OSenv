@@ -133,29 +133,29 @@
   (yas-reload-all))
 
 ;; yasnippet conflicts between company and Yasnippet
-  (defun check-expansion ()
-    (save-excursion
-      (if (looking-at "\\_>") t
-        (backward-char 1)
-        (if (looking-at "\\.") t
-          (backward-char 1)
-          (if (looking-at "->") t nil)))))
+  ;; (defun check-expansion ()
+  ;;   (save-excursion
+  ;;     (if (looking-at "\\_>") t
+  ;;       (backward-char 1)
+  ;;       (if (looking-at "\\.") t
+  ;;         (backward-char 1)
+  ;;         (if (looking-at "->") t nil)))))
 
-  (defun do-yas-expand ()
-    (let ((yas/fallback-behavior 'return-nil))
-      (yas/expand)))
+  ;; (defun do-yas-expand ()
+  ;;   (let ((yas/fallback-behavior 'return-nil))
+  ;;     (yas/expand)))
 
-  (defun tab-indent-or-complete ()
-    (interactive)
-    (if (minibufferp)
-        (minibuffer-complete)
-      (if (or (not yas/minor-mode)
-              (null (do-yas-expand)))
-          (if (check-expansion)
-              (company-complete-common)
-            (indent-for-tab-command)))))
+  ;; (defun tab-indent-or-complete ()
+  ;;   (interactive)
+  ;;   (if (minibufferp)
+  ;;       (minibuffer-complete)
+  ;;     (if (or (not yas/minor-mode)
+  ;;             (null (do-yas-expand)))
+  ;;         (if (check-expansion)
+  ;;             (company-complete-common)
+  ;;           (indent-for-tab-command)))))
 
-  (global-set-key [tab] 'tab-indent-or-complete)
+  ;; (global-set-key [tab] 'tab-indent-or-complete)
 
 ;; terminal
 (setq-default
@@ -166,4 +166,8 @@
 (setq gc-cons-threshold 200000000)
 (setq read-process-output-max ( * 1024 1024) )
 (setq lsp-prefer-capf t)
+
+(add-to-list 'lsp-file-watch-ignored "[/\\\\]build$")
+(add-to-list 'lsp-file-watch-ignored "[/\\\\]data")
+
 
