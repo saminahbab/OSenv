@@ -1,3 +1,4 @@
+
 (setq-default custom-file "~/.gnu-emacs-custom")
 
 ;; Don't use lock files (which also clutter up my view of a directory.
@@ -107,7 +108,9 @@
   :ensure t
   :config
   (add-hook 'python-mode-hook #'lsp)
-  (add-hook 'go-mode-hook #'lsp))
+  (add-hook 'go-mode-hook #'lsp)
+  (add-hook 'rust-mode-hook #'lsp)
+  )
 
 
 (use-package lsp-ui
@@ -132,30 +135,30 @@
   (use-package yasnippet-snippets :ensure t )
   (yas-reload-all))
 
-;; yasnippet conflicts between company and Yasnippet
-  (defun check-expansion ()
-    (save-excursion
-      (if (looking-at "\\_>") t
-        (backward-char 1)
-        (if (looking-at "\\.") t
-          (backward-char 1)
-          (if (looking-at "->") t nil)))))
+;; ;; yasnippet conflicts between company and Yasnippet
+;;   (defun check-expansion ()
+;;     (save-excursion
+;;       (if (looking-at "\\_>") t
+;;         (backward-char 1)
+;;         (if (looking-at "\\.") t
+;;           (backward-char 1)
+;;           (if (looking-at "->") t nil)))))
 
-  (defun do-yas-expand ()
-    (let ((yas/fallback-behavior 'return-nil))
-      (yas/expand)))
+;;   (defun do-yas-expand ()
+;;     (let ((yas/fallback-behavior 'return-nil))
+;;       (yas/expand)))
 
-  (defun tab-indent-or-complete ()
-    (interactive)
-    (if (minibufferp)
-        (minibuffer-complete)
-      (if (or (not yas/minor-mode)
-              (null (do-yas-expand)))
-          (if (check-expansion)
-              (company-complete-common)
-            (indent-for-tab-command)))))
+;;   (defun tab-indent-or-complete ()
+;;     (interactive)
+;;     (if (minibufferp)
+;;         (minibuffer-complete)
+;;       (if (or (not yas/minor-mode)
+;;               (null (do-yas-expand)))
+;;           (if (check-expansion)
+;;               (company-complete-common)
+;;             (indent-for-tab-command)))))
 
-  (global-set-key [tab] 'tab-indent-or-complete)
+;;   (global-set-key [tab] 'tab-indent-or-complete)
 
 ;; terminal
 (setq-default
