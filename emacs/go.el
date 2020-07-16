@@ -18,6 +18,7 @@
 (setq lsp-eldoc-render-all t)
 (setq lsp-gopls-complete-unimported t)
 (setq compilation-window-height 14)
+(setq lsp-gopls-codelens nil)
 
 (use-package go-mode :mode "\\*\\.go")
 (add-hook 'go-mode-hook #'smartparens-mode)

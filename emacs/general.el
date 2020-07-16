@@ -158,7 +158,11 @@
 ;;               (company-complete-common)
 ;;             (indent-for-tab-command)))))
 
+<<<<<<< variant A
 ;;   (global-set-key [tab] 'tab-indent-or-complete)
+>>>>>>> variant B
+  ;; (global-set-key [tab] 'tab-indent-or-complete)
+======= end
 
 ;; terminal
 (setq-default
@@ -169,4 +173,8 @@
 (setq gc-cons-threshold 200000000)
 (setq read-process-output-max ( * 1024 1024) )
 (setq lsp-prefer-capf t)
+
+(add-to-list 'lsp-file-watch-ignored "[/\\\\]build$")
+(add-to-list 'lsp-file-watch-ignored "[/\\\\]data")
+
 
