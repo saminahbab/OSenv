@@ -35,7 +35,7 @@
     flycheck
     lsp-mode
     lsp-ui
-
+    indent-tools
     ;; Python
     ein
     
@@ -45,8 +45,15 @@
     ;; Typescript/ Javascript
     prettier-js
     tide
+    indium
 
+    ;; Rust
+    cargo
+    rust-mode
+    flycheck-rust
+    toml-mode
     ))
+
 
 
 (if (eq system-type 'darwin)
@@ -90,10 +97,10 @@
   :mode "\\.js\\'")
 
 ;; prettier
-(use-package prettier-js
-  :ensure t
-  :after (rjsx-mode)
-  :hook (rjsx-mode . prettier-js-mode))
+;; (use-package prettier-js
+;;   :ensure t
+;;   :after (rjsx-mode)
+;;   :hook (rjsx-mode . prettier-js-mode))
 
 
 ;; smart parents
