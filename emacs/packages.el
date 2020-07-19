@@ -1,24 +1,23 @@
-
 (require 'package)
 
 (add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
+	     '("melpa" . "https://melpa.org/packages/") t)
 
 (add-to-list 'package-archives
-             '("gnu" . "https://elpa.gnu.org/packages/") t)
+	     '("gnu" . "https://elpa.gnu.org/packages/") t)
 
 (package-initialize)
 
 (when (not package-archive-contents)
   (package-refresh-contents))
-(package-refresh-contents) 
+(package-refresh-contents)
 
 (defvar my-packages
   '(
     ;; General
     spaceline
     spacemacs-theme
-    counsel 
+    counsel
     yasnippet
     yasnippet-snippets
     smartparens
@@ -36,10 +35,11 @@
     lsp-mode
     lsp-ui
     indent-tools
+    deadgrep
     ;; Python
     ein
-    
-    ;; Go    
+
+    ;; Go
     go-mode
 
     ;; Typescript/ Javascript
@@ -52,6 +52,9 @@
     rust-mode
     flycheck-rust
     toml-mode
+
+    ;; Neo4j
+    cypher-mode
     ))
 
 
@@ -96,6 +99,11 @@
   :ensure t
   :mode "\\.js\\'")
 
+;;cyopher
+(use-package cypher-mode
+  :ensure t
+  :mode "\\.cql")
+
 ;; prettier
 ;; (use-package prettier-js
 ;;   :ensure t
@@ -109,7 +117,7 @@
   :hook ((after-init . smartparens-global-mode))
   :init (setq sp-hybrid-kill-entire-symbol nil))
 
-;; rainbowdelimiters 
+;; rainbowdelimiters
 (use-package rainbow-delimiters
   :defer t
   :hook '(prog-mode-hook text-mode-hook org-src-mode-hook))
@@ -117,7 +125,7 @@
 ;; follow symlinked files to origin
 (setq find-file-visit-truename t)
 
-;; rust 
+;; rust
 (use-package toml-mode)
 
 (use-package rust-mode
@@ -131,5 +139,5 @@
   :config (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
 
 (add-hook 'rust-mode-hook
-          (lambda ()
-            (local-set-key (kbd "C-c <tab>") #'rust-format-buffer)))
+	  (lambda ()
+	    (local-set-key (kbd "C-c <tab>") #'rust-format-buffer)))
