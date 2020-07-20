@@ -171,3 +171,10 @@
 (add-to-list 'lsp-file-watch-ignored "[/\\\\]data")
 
 
+(setq org-default-notes-file (concat org-directory "~/orgs/gtdWork.org"))
+
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/orgs/gtdWork.org" "Tasks")
+         "* TODO %?\n  %i\n  %a")
+        ("j" "Journal" entry (file+datetree "~/org/journal.org")
+         "* %?\nEntered on %U\n  %i\n  %a")))
