@@ -3,6 +3,12 @@
 ;; Don't use lock files (which also clutter up my view of a directory.
 (setq create-lockfiles nil)
 
+
+;; Use Menlo as default font
+(set-frame-font "Menlo 10" nil t)
+
+
+
 ;;save directory is away from project
 (setq backup-directory-alist '(("." . "~/.saves")))
 
@@ -13,18 +19,39 @@
 ;; enable quick confirm with y or n instead of yes or no.
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-;; theming ? 
+;; theming ?
 (use-package spaceline
   :after (spaceline-emacs-theme)
   :ensure t )
 
 
 ;; maximise real estate and get rid of splash
-(menu-bar-mode -1) (tool-bar-mode -1) (scroll-bar-mode -1)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+
+
+;; Highlight Current Line
+(add-hook 'after-init-hook 'global-hl-line-mode)
+
+;; Proper line wrapping
+(global-visual-line-mode t)
+
+;; Remove useless whitespace before saving a file
+(add-hook 'before-save-hook 'whitespace-cleanup)
+(add-hook 'before-save-hook (lambda() (delete-trailing-whitespace)))
+
+
+;; Smart-mode-line makes the mode-line better to read
+;; first remove annoying message at startup that
+;; asks if you want to run the theme lisp code
+(setq sml/no-confirm-load-theme t)
+
+
 (setq-default inhibit-splash-screen t)
 
 (use-package savehist
-  :config 
+  :config
     (setq history-length 10000))
 (savehist-mode)
 
@@ -107,7 +134,9 @@
   :ensure t
   :config
   (add-hook 'python-mode-hook #'lsp)
-  (add-hook 'go-mode-hook #'lsp))
+  (add-hook 'go-mode-hook #'lsp)
+  (add-hook 'rust-mode-hook #'lsp)
+  )
 
 
 (use-package lsp-ui
@@ -132,31 +161,6 @@
   (use-package yasnippet-snippets :ensure t )
   (yas-reload-all))
 
-;; yasnippet conflicts between company and Yasnippet
-  ;; (defun check-expansion ()
-  ;;   (save-excursion
-  ;;     (if (looking-at "\\_>") t
-  ;;       (backward-char 1)
-  ;;       (if (looking-at "\\.") t
-  ;;         (backward-char 1)
-  ;;         (if (looking-at "->") t nil)))))
-
-  ;; (defun do-yas-expand ()
-  ;;   (let ((yas/fallback-behavior 'return-nil))
-  ;;     (yas/expand)))
-
-  ;; (defun tab-indent-or-complete ()
-  ;;   (interactive)
-  ;;   (if (minibufferp)
-  ;;       (minibuffer-complete)
-  ;;     (if (or (not yas/minor-mode)
-  ;;             (null (do-yas-expand)))
-  ;;         (if (check-expansion)
-  ;;             (company-complete-common)
-  ;;           (indent-for-tab-command)))))
-
-  ;; (global-set-key [tab] 'tab-indent-or-complete)
-
 ;; terminal
 (setq-default
  shell-file-name "/bin/zsh")
@@ -171,10 +175,9 @@
 (add-to-list 'lsp-file-watch-ignored "[/\\\\]data")
 
 
-(setq org-default-notes-file (concat org-directory "~/orgs/gtdWork.org"))
 
 (setq org-capture-templates
       '(("t" "Todo" entry (file+headline "~/orgs/gtdWork.org" "Tasks")
-         "* TODO %?\n  %i\n  %a")
-        ("j" "Journal" entry (file+datetree "~/org/journal.org")
-         "* %?\nEntered on %U\n  %i\n  %a")))
+	 "* TODO %?\n  %i\n  %a")
+	("j" "Journal" entry (file+datetree "~/org/journal.org")
+	 "* %?\nEntered on %U\n  %i\n  %a")))

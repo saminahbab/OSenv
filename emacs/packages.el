@@ -1,17 +1,16 @@
-
 (require 'package)
 
 (add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
+	     '("melpa" . "https://melpa.org/packages/") t)
 
 (add-to-list 'package-archives
-             '("gnu" . "https://elpa.gnu.org/packages/") t)
+	     '("gnu" . "https://elpa.gnu.org/packages/") t)
 
 (package-initialize)
 
 (when (not package-archive-contents)
   (package-refresh-contents))
-(package-refresh-contents) 
+(package-refresh-contents)
 
 (defvar my-packages
   '(
@@ -19,7 +18,7 @@
     deadgrep
     spaceline
     spacemacs-theme
-    counsel 
+    counsel
     yasnippet
     yasnippet-snippets
     smartparens
@@ -36,18 +35,33 @@
     flycheck
     lsp-mode
     lsp-ui
-
+    indent-tools
+    deadgrep
     ;; Python
     ein
-    
-    ;; Go    
+
+    ;; Go
     go-mode
 
     ;; Typescript/ Javascript
     prettier-js
     tide
+    indium
 
+    ;; Rust
+    cargo
+    rust-mode
+    flycheck-rust
+    toml-mode
+
+    ;; Neo4j
+    cypher-mode
+
+    ;; Org
+    org-roam
     ))
+
+
 
 
 (if (eq system-type 'darwin)
@@ -57,6 +71,23 @@
 (dolist (p my-packages)
   (when (not (package-installed-p p))
     (package-install p)));; install packages from the list that are not yet installed
+
+
+
+;; org roam
+(use-package org-roam
+      :ensure t
+      :hook
+      (after-init . org-roam-mode)
+      :custom
+      (org-roam-directory "/path/to/org-files/")
+      :bind (:map org-roam-mode-map
+	      (("C-c n l" . org-roam)
+	       ("C-c n f" . org-roam-find-file)
+	       ("C-c n g" . org-roam-graph-show))
+	      :map org-mode-map
+	      (("C-c n i" . org-roam-insert))
+	      (("C-c n I" . org-roam-insert-immediate))))
 
 ;; Typescript Tide Setup
 
@@ -90,11 +121,16 @@
   :ensure t
   :mode "\\.js\\'")
 
-;; prettier
-(use-package prettier-js
+;;cyopher
+(use-package cypher-mode
   :ensure t
-  :after (rjsx-mode)
-  :hook (rjsx-mode . prettier-js-mode))
+  :mode "\\.cql")
+
+;; prettier
+;; (use-package prettier-js
+;;   :ensure t
+;;   :after (rjsx-mode)
+;;   :hook (rjsx-mode . prettier-js-mode))
 
 
 ;; smart parents
@@ -103,10 +139,27 @@
   :hook ((after-init . smartparens-global-mode))
   :init (setq sp-hybrid-kill-entire-symbol nil))
 
-;; rainbowdelimiters 
+;; rainbowdelimiters
 (use-package rainbow-delimiters
   :defer t
   :hook '(prog-mode-hook text-mode-hook org-src-mode-hook))
 
 ;; follow symlinked files to origin
 (setq find-file-visit-truename t)
+
+;; rust
+(use-package toml-mode)
+
+(use-package rust-mode
+  :hook (rust-mode . lsp))
+
+;; Add keybindings for interacting with Cargo
+(use-package cargo
+  :hook (rust-mode . cargo-minor-mode))
+
+(use-package flycheck-rust
+  :config (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+
+(add-hook 'rust-mode-hook
+	  (lambda ()
+	    (local-set-key (kbd "C-c <tab>") #'rust-format-buffer)))

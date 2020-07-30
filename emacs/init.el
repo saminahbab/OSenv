@@ -12,11 +12,9 @@
   (package-refresh-cpntents))
 
 ;; Theming
-(load-theme 'spacemacs-dark)
+(load-theme 'spacemacs-light)
 (use-package spaceline)
 (spaceline-emacs-theme)
 
 ;; languages
 (load "go")
-
-
