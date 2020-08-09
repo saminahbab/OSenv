@@ -18,3 +18,19 @@
 
 ;; languages
 (load "go")
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default))
+ '(org-agenda-files '("~/orgs/gtd.org" "~/orgs/journal.org"))
+ '(package-selected-packages
+   '(elisp-format markdown-preview-mode org-bullets rainbow-mode ripgrep yasnippet-snippets use-package toml-mode tide spacemacs-theme spaceline smex smartparens rjsx-mode rainbow-delimiters prettier-js org-roam magit lsp-ui ivy-rich indium indent-tools go-mode flycheck-rust ein deadgrep cypher-mode counsel-projectile company-lsp cargo)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
