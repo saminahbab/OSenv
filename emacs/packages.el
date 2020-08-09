@@ -80,7 +80,7 @@
       :hook
       (after-init . org-roam-mode)
       :custom
-      (org-roam-directory "/path/to/org-files/")
+      (org-roam-directory "~/orgs/roam")
       :bind (:map org-roam-mode-map
 	      (("C-c n l" . org-roam)
 	       ("C-c n f" . org-roam-find-file)
