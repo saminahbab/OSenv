@@ -182,7 +182,7 @@
 			       "* TODO %?\n %i\n %a")
 			      ("j" "Journal" entry (file+datetree "~/orgs/journal.org")
 			       "* %?\nEntered on %U\n  %i\n  %a")
-			      ("T" "Tickler" entry (file+headline "~/gtd/tickler.org" "Tickler")
+			      ("T" "Tickler" entry (file+headline "~/orgs/tickler.org" "Tickler")
 			       "* %i%? \n %U")))
 
 (setq org-refile-targets (quote (("~/orgs/tickler.org" :maxlevel . 3)

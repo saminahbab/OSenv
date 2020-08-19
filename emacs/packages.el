@@ -39,6 +39,7 @@
     deadgrep
     ;; Python
     ein
+    lsp-pyright
 
     ;; Go
     go-mode
@@ -163,3 +164,10 @@
 (add-hook 'rust-mode-hook
 	  (lambda ()
 	    (local-set-key (kbd "C-c <tab>") #'rust-format-buffer)))
+;; python
+
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+			  (require 'lsp-pyright)
+			  (lsp))))  ; or lsp-deferred
