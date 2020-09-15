@@ -157,11 +157,13 @@
   yasnippet
   :ensure t
   :init (yas-global-mode 1)
+  :bind (("C-c ]" . yas-expand-from-trigger-key))
   :config (use-package
 	    yasnippet-snippets
 	    :ensure t)
   (yas-reload-all))
-
+(setq yas-snippet-dirs (append yas-snippet-dirs
+			       '("snippets")))
 ;; terminal
 (setq-default shell-file-name "/bin/zsh")
 
@@ -173,6 +175,7 @@
 
 (add-to-list 'lsp-file-watch-ignored "[/\\\\]build$")
 (add-to-list 'lsp-file-watch-ignored "[/\\\\]data")
+(add-to-list 'lsp-file-watch-ignored "[/\\\\]venv")
 
 
 ;; org capture
@@ -199,8 +202,15 @@
     (org-agenda)))
 
 
-
 ;; magit key  binding
 (global-set-key (kbd "C-c m") 'magit)
 ;; org agenda
 (setq org-agenda-files (list "~/orgs/gtd.org" "~/orgs/code.org" "~/orgs/journal.org"))
+
+;; org
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+(add-hook 'org-mode-hook 'org-indent-mode)
+;; indents
+(add-hook 'python-mode-hook #'aggressive-indent-mode)
+(add-hook 'go-mode-hook #'aggressive-indent-mode)
+(add-hook 'rust-mode-hook #'aggressive-indent-mode)
