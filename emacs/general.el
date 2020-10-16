@@ -10,6 +10,7 @@
 ;; remap keys
 
 (define-key global-map (kbd "M-k") 'kill-this-buffer)
+(global-set-key (kbd "C-z") 'undo)
 
 ;;save directory is away from project
 (setq backup-directory-alist '(("." . "~/.saves")))
@@ -32,6 +33,10 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
+(setq inhibit-startup-screen t)
+(setq inhibit-startup-echo-area-message t)
+(setq inhibit-startup-message t)
+(setq initial-scratch-message nil)
 
 
 ;; Highlight Current Line
@@ -108,11 +113,14 @@
   :config (define-key projectile-mode-map (kbd "C-x p") 'projectile-command-map)
   (projectile-mode +1))
 
+;; helm bibtex binding
+(global-set-key (kbd "C-h b") 'helm-bibtex)
+(global-set-key (kbd "C-h g") 'helm-do-grep-ag)
 (use-package
   counsel-projectile
   :bind
   ;; Enable ripgrep with counsel.
-  (("C-c f" . #'counsel-projectile-rg)))
+  (("C-c g" . #'counsel-projectile-rg)))
 (use-package
   smex)
 
@@ -130,8 +138,9 @@
 (use-package
   flycheck
   :ensure t
-  :bind (("C-c l p" . 'flycheck-previous-error)
-	 ("C-c l n" . 'flycheck-next-error)))
+  :bind (("C-c f p" . 'flycheck-previous-error)
+	 ("C-c f n" . 'flycheck-next-error)
+	 ("C-c f f" . flycheck-first-error)))
 
 ;; LSP
 
@@ -140,7 +149,8 @@
   :ensure t
   :config (add-hook 'python-mode-hook #'lsp)
   (add-hook 'go-mode-hook #'lsp)
-  (add-hook 'rust-mode-hook #'lsp))
+  (add-hook 'rust-mode-hook #'lsp)
+  (add-hook 'terraform-mode #'lsp))
 
 
 (use-package
@@ -210,7 +220,7 @@
 ;; org
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 (add-hook 'org-mode-hook 'org-indent-mode)
+
 ;; indents
-(add-hook 'python-mode-hook #'aggressive-indent-mode)
 (add-hook 'go-mode-hook #'aggressive-indent-mode)
 (add-hook 'rust-mode-hook #'aggressive-indent-mode)

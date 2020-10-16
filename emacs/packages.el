@@ -37,6 +37,11 @@
     lsp-ui
     indent-tools
     deadgrep
+    avy
+    helm
+    dashboard
+    jq-mode
+
     ;; Python
     ein
     lsp-pyright
@@ -60,21 +65,32 @@
 
     ;; Org
     org-roam
-    ))
+    org-roam-server
+    org-roam-bibtex
+    deft
+    helm-bibtex
+    org-ref
+    org-noter
+    org-download
 
+    ))
 
 
 
 (if (eq system-type 'darwin)
     (add-to-list 'my-packages 'exec-path-from-shell))
 
-
 (dolist (p my-packages)
   (when (not (package-installed-p p))
     (package-install p)));; install packages from the list that are not yet installed
 
 
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook))
 
+(setq inhibit-splash-screen t) ;; it'll disable splash screen
 ;; org roam
 (use-package org-roam
       :ensure t
@@ -88,10 +104,161 @@
 	       ("C-c n g" . org-roam-graph-show))
 	      :map org-mode-map
 	      (("C-c n i" . org-roam-insert))
-	      (("C-c n I" . org-roam-insert-immediate))))
+	      (("C-c n I" . org-roam-insert-immediate)))
+      )
+
+(setq org-roam-capture-templates
+	'(("d" "default" plain
+	   (function org-roam-capture--get-point)
+	   "%?"
+	   :file-name "%<%Y%m%d%H%M%S>-${slug}"
+	   :head "#+title: ${title}\n#+created: %u\n#+last_modified: %U\n\n"
+	   :unnarrowed t))
+
+	)
+
+
+
+;; capture template to grab websites. Requires org-roam protocol.
+(setq org-roam-capture-ref-templates
+      '(("roam" "ref" plain (function org-roam-capture--get-point)
+	 "%?"
+	 :file-name "web/${slug}"
+	 :head "#+TITLE: ${title}
+#+ROAM_KEY: ${ref}
+#+ROAM_ALIAS:
+#+ROAM_TAGS:
+#+CREATED: %u
+#+LAST_MODIFIED: %U
+- source :: ${ref}\n\n"
+	 :unnarrowed t)))
+(require 'org-roam-protocol)
+
+;; and org-roam server
+(use-package org-roam-server
+  :ensure t
+  :config
+  (setq org-roam-server-host "127.0.0.1"
+	org-roam-server-port 8081
+	org-roam-server-authenticate nil
+	org-roam-server-export-inline-images t
+	org-roam-server-serve-files nil
+	org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+	org-roam-server-network-poll t
+	org-roam-server-network-arrows nil
+	org-roam-server-network-label-truncate t
+	org-roam-server-network-label-truncate-length 60
+	org-roam-server-network-label-wrap-length 20))
+
+;; org ref
+(use-package org-ref
+    :config
+    (setq
+	 org-ref-completion-library 'org-ref-ivy-cite
+	 org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
+	 org-ref-default-bibliography (list "~/bibtex/bibs.bib")
+	 org-ref-bibliography-notes "~/orgs/bibnotes.org"
+	 org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
+	 org-ref-notes-directory "~/orgs/notes/"
+
+    ))
+
+(defvar orb-title-format "${author-or-editor-abbrev} (${date}).  ${title}."
+  "Format of the title to use for `orb-templates'.")
+
+;; org roam bibtex
+(use-package org-roam-bibtex
+  :requires bibtex-completion
+  :load-path "~/bibtex/bibs.bib" ;Modify with your own path
+  :hook (org-roam-mode . org-roam-bibtex-mode)
+  :bind (:map org-mode-map
+	      (("C-c n a" . orb-note-actions)))
+   )
+
+(setq orb-preformat-keywords   '(("citekey" . "=key=") "title" "url" "file" "author-or-editor" "keywords"))
+
+(setq orb-templates  `(
+      ("r" "ref" plain
+      (function org-roam-capture--get-point)
+      ""
+      :file-name "refs/${citekey}"
+      :head ,(s-join "\n"
+		     (list
+		      (concat "#+title: "
+			      orb-title-format)
+		      "#+roam_key: ${ref}"
+		      "#+created: %U"
+		      "#+last_modified: %U\n\n"))
+      :unnarrowed t)
+
+     ("n" "ref + noter" plain
+      (function org-roam-capture--get-point)
+      ""
+      :file-name "refs/${citekey}"
+      :head ,(s-join "\n"
+		     (list
+		      "#+title:${title}.\n"
+		      "#+roam_key: ${ref}"
+		      ""
+		      "* Notes :noter:"
+		      ":PROPERTIES:"
+		      ":NOTER_DOCUMENT: %(orb-process-file-field \"${citekey}\")"
+		      ":NOTER_PAGE:"
+		      ":END:\n\n")))))
+
+(setq
+ helm-bibtex-bibliography '("~/bibtex/bibs.bib")
+ bibtex-completion-notes-path "~/orgs/notes/"
+ bibtex-completion-bibliography "~/bibtex/bibs.bib"
+ bibtex-completion-library-path "~/Zotero/"
+ bibtex-completion-pdf-field "file"
+ )
+
+;; pdf tools stuff
+(pdf-tools-install)
+
+;; pdfs noter
+(use-package org-noter
+  :after (:any org pdf-view)
+  :config
+  (setq
+   ;; Please stop opening frames
+   org-noter-always-create-frame nil
+   ;; I want to see the whole file
+   org-noter-hide-other nil
+   ;; Everything is relative to the main notes file
+   org-noter-notes-search-path "~/orgs/"
+   )
+  :ensure t
+  )
+
+;; pdftools is better than the standard noter thing
+;;(use-package org-pdftools
+;;  :hook (org-load . org-pdftools-setup-link))
+
+(use-package org-noter-pdftools
+  :after org-noter
+  :config
+  (with-eval-after-load 'pdf-annot
+    (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+
+;; download pictures
+(require 'org-download)
+;; DEFT
+
+(use-package deft
+      :after org
+      :bind
+      ("C-c n d" . deft)
+      :custom
+      (deft-recursive t)
+      (deft-use-filter-string-for-filename t)
+      (deft-default-extension "org")
+      (deft-directory "~/orgs/"))
+;;server start for org roam
+(server-start)
 
 ;; Typescript Tide Setup
-
 (defun setup-tide-mode()
   (interactive)
   (tide-setup)
@@ -133,7 +300,10 @@
 ;;   :after (rjsx-mode)
 ;;   :hook (rjsx-mode . prettier-js-mode))
 
-
+;; avy
+(global-set-key (kbd "C-;") 'avy-goto-char)
+(global-set-key (kbd "C-'") 'avy-goto-char-2)
+(global-set-key (kbd "C-#") 'avy-goto-line)
 ;; smart parents
 (use-package smartparens)
 (use-package smartparens-config
@@ -144,7 +314,8 @@
 (use-package rainbow-delimiters
   :defer t
   :hook '(prog-mode-hook text-mode-hook org-src-mode-hook))
-
+;; why does the above hoook not work?
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 ;; follow symlinked files to origin
 (setq find-file-visit-truename t)
 
@@ -171,3 +342,5 @@
   :hook (python-mode . (lambda ()
 			  (require 'lsp-pyright)
 			  (lsp))))  ; or lsp-deferred
+;;; terraform
+(add-hook 'terraform-mode-hook #'lsp)
