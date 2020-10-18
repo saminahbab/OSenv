@@ -95,13 +95,15 @@
 (use-package org-roam
       :ensure t
       :hook
-      (after-init . org-roam-mode)
+      ((after-init . org-roam-mode )
+       'org-roam-server-mode)
       :custom
       (org-roam-directory "~/orgs/roam")
       :bind (:map org-roam-mode-map
 	      (("C-c n l" . org-roam)
 	       ("C-c n f" . org-roam-find-file)
-	       ("C-c n g" . org-roam-graph-show))
+	       ("C-c n g" . org-roam-graph-show)
+	       )
 	      :map org-mode-map
 	      (("C-c n i" . org-roam-insert))
 	      (("C-c n I" . org-roam-insert-immediate)))
@@ -112,7 +114,7 @@
 	   (function org-roam-capture--get-point)
 	   "%?"
 	   :file-name "%<%Y%m%d%H%M%S>-${slug}"
-	   :head "#+title: ${title}\n#+created: %u\n#+last_modified: %U\n\n"
+	   :head "#+title: ${title}\n#+ROAM_TAGS:\n#+created: %u\n#+last_modified: %U\n\n"
 	   :unnarrowed t))
 
 	)
@@ -166,7 +168,7 @@
 (defvar orb-title-format "${author-or-editor-abbrev} (${date}).  ${title}."
   "Format of the title to use for `orb-templates'.")
 
-;; org roam bibtex
+;; Org roam bibtex
 (use-package org-roam-bibtex
   :requires bibtex-completion
   :load-path "~/bibtex/bibs.bib" ;Modify with your own path
@@ -197,7 +199,8 @@
       :file-name "refs/${citekey}"
       :head ,(s-join "\n"
 		     (list
-		      "#+title:${title}.\n"
+		      "#+title:${title}."
+		      "#+ROAM_TAGS:"
 		      "#+roam_key: ${ref}"
 		      ""
 		      "* Notes :noter:"
@@ -225,7 +228,7 @@
    ;; Please stop opening frames
    org-noter-always-create-frame nil
    ;; I want to see the whole file
-   org-noter-hide-other nil
+   org-noter-hide-other t
    ;; Everything is relative to the main notes file
    org-noter-notes-search-path "~/orgs/"
    )
