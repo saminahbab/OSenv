@@ -129,8 +129,8 @@
 	 :head "#+TITLE: ${title}
 #+ROAM_KEY: ${ref}
 #+ROAM_ALIAS:
-#+ROAM_TAGS:
-#+CREATED: %u
+#+ROAM_TAGS: Link
+#+Created: %u
 #+LAST_MODIFIED: %U
 - source :: ${ref}\n\n"
 	 :unnarrowed t)))
@@ -231,6 +231,8 @@
    org-noter-hide-other t
    ;; Everything is relative to the main notes file
    org-noter-notes-search-path "~/orgs/"
+
+   org-noter-auto-save-last-location nil
    )
   :ensure t
   )
@@ -303,10 +305,18 @@
 ;;   :after (rjsx-mode)
 ;;   :hook (rjsx-mode . prettier-js-mode))
 
-;; avy
+;;
+(global-set-key (kbd "M-'") 'kill-buffer-and-window)
+;; Avy
 (global-set-key (kbd "C-;") 'avy-goto-char)
 (global-set-key (kbd "C-'") 'avy-goto-char-2)
 (global-set-key (kbd "C-#") 'avy-goto-line)
+
+(setq avy-keys
+      (nconc (number-sequence ?a ?z)
+	     (number-sequence ?A ?Z)
+	     (number-sequence ?1 ?9)
+	     '(?0)))
 ;; smart parents
 (use-package smartparens)
 (use-package smartparens-config
@@ -347,3 +357,6 @@
 			  (lsp))))  ; or lsp-deferred
 ;;; terraform
 (add-hook 'terraform-mode-hook #'lsp)
+
+;; org journal
+(use-package org-journal)

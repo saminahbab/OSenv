@@ -224,3 +224,11 @@
 ;; indents
 (add-hook 'go-mode-hook #'aggressive-indent-mode)
 (add-hook 'rust-mode-hook #'aggressive-indent-mode)
+
+(eval-after-load 'python-mode-hook
+  (lambda () (local-set-key (kbd "C-c b") 'python-black-buffer)))
+
+
+(global-set-key (kbd "M-o") 'ace-window)
+
+(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
