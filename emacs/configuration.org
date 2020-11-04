@@ -1,0 +1,108 @@
+* General
+** Add to list load Path
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/lisp")
+#+END_SRC
+** Require package
+#+BEGIN_SRC emacs-lisp
+  (require 'package)
+  #+END_SRC
+** Don't use lock files (which clutter view of a directory)
+#+BEGIN_SRC emacs-lisp
+  (setq create-lockfiles nil)
+  #+END_SRC
+** Package Archives
+* Theming/UI
+** Font
+#+BEGIN_SRC emacs-lisp
+(set-frame-font "Menlo 10" nil t)
+  #+END_SRC
+** Maximise Real Estate
+#+BEGIN_SRC emacs-lisp
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (setq inhibit-startup-screen t)
+  (setq inhibit-startup-echo-area-message t)
+  (setq inhibit-startup-message t)
+  (setq initial-scratch-message nil)
+(setq-default inhibit-splash-screen t)
+  #+END_SRC
+** Highlight Current Line
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'after-init-hook 'global-hl-line-mode)
+  (global-visual-line-mode t)
+(show-paren-mode 1)
+  #+END_SRC
+** Theme
+#+BEGIN_SRC emacs-lisp
+(setq sml/no-confirm-load-theme t)
+
+  #+END_SRC
+** General Pre Save
+#+BEGIN_SRC emacs-lisp
+(add-hook 'before-save-hook 'whitespace-cleanup)
+(add-hook 'before-save-hook (lambda()
+                              (delete-trailing-whitespace)))
+
+  #+END_SRC
+** Dashboard
+** Org Background Color
+#+BEGIN_SRC emacs-lisp
+
+
+(setq org-src-block-faces '(("emacs-lisp" (:background "#EEE2FF"))))
+
+  #+END_SRC
+
+
+* Modes
+** Rust
+** Python
+** Go
+** Javascript
+** Typescript
+** Cypher
+** Terraform
+** gql
+* Key Remaps
+** buffers
+#+BEGIN_SRC emacs-lisp
+  (define-key global-map (kbd "M-k") 'kill-this-buffer)
+  #+END_SRC
+** Text Editing
+
+
+* Packages
+** Magit
+** PDF-tools
+** Ace Window
+** Avy
+** SmartParens
+** Rainbow Delimiters
+** DeadGrep
+** Spaceline
+** Yasnippet
+** Company
+** Flycheck
+** Indent Tools
+** Helm
+** Counsel
+Do I really need this? I am not sure I use this. Come back to this and revaluate
+* LSP
+** Meat and Bones
+** UI
+** Tuning
+** Ignore Files
+* Org
+What a package. Game changer.
+** Agenda
+** Capture
+** Roam
+** Roam Server
+** Roam Bibtex
+** Ref
+** Noter
+** Deft
+** Journal
+Better than Dailies in my opinion, and also separate to your personal roam graphs
