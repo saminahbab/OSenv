@@ -11,6 +11,10 @@
 
 (define-key global-map (kbd "M-k") 'kill-this-buffer)
 (global-set-key (kbd "C-z") 'undo)
+(global-set-key (kbd "C-c c r" ) 'comment-region)
+(global-set-key (kbd  "C-c c u") 'uncomment-region)
+(global-set-key [?\M-h] 'delete-backward-char)
+
 
 ;;save directory is away from project
 (setq backup-directory-alist '(("." . "~/.saves")))
@@ -232,3 +236,5 @@
 (global-set-key (kbd "M-o") 'ace-window)
 
 (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+
+(global-set-key (kbd "C-c e c") 'mc/edit-lines)

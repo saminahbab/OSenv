@@ -114,7 +114,7 @@
 	   (function org-roam-capture--get-point)
 	   "%?"
 	   :file-name "%<%Y%m%d%H%M%S>-${slug}"
-	   :head "#+title: ${title}\n#+ROAM_TAGS:\n#+created: %u\n#+last_modified: %U\n\n"
+	   :head "#+title: ${title}\n#+ROAM_TAGS:\n#+created: %u\n#+last_modified: %U\n\n\n\n"
 	   :unnarrowed t))
 
 	)
@@ -360,3 +360,7 @@
 
 ;; org journal
 (use-package org-journal)
+
+(eval-after-load 'org
+  (progn
+    (define-key org-mode-map (kbd "C-c ]") yas-expand-only-for-last-commands)))
