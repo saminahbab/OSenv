@@ -1,0 +1,199 @@
+[colors]
+; background = #002f343f
+background = #2f343f
+background-alt = #5e697d
+foreground = #f5f6f7
+foreground-alt = #555555
+primary = #5294e2
+secondary = #e60053
+alert = #bd2c40
+
+[bar/disp1]
+monitor = DisplayPort-1
+width = 100%
+height = 40
+radius = 0.0
+fixed-center = true
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #ff0000
+
+border-size = 0
+border-color = #00000000
+
+padding-left = 0
+padding-right = 0
+
+module-margin-left = 1
+module-margin-right = 1
+
+font-0 = "Ubuntu:size=12"
+font-1 = "Ubuntu Nerd Font Mono:style=Book"
+font-2 = "Ubuntu:size=12:style:italic"
+
+modules-left = i3
+
+modules-right = network cpu  date
+
+tray-position = right
+tray-background = ${colors.background}
+tray-detached = false
+tray-maxsize = 24
+
+dpi = 96
+
+;wm-restack = i3
+
+;override-redirect = true
+
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[bar/disp2]
+monitor = DisplayPort-2
+width = 100%
+height = 40
+radius = 0.0
+fixed-center = true
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #ff0000
+
+border-size = 0
+border-color = #00000000
+
+padding-left = 0
+padding-right = 0
+
+module-margin-left = 1
+module-margin-right = 1
+
+font-0 = "Ubuntu:size=12"
+font-1 = "Ubuntu Nerd Font Mono:style=Book"
+font-2 = "Ubuntu:size=12:style:italic"
+
+modules-left = i3
+
+modules-right = network cpu  date
+
+tray-position = right
+tray-background = ${colors.background}
+tray-detached = false
+tray-maxsize = 24
+
+dpi = 96
+
+;wm-restack = i3
+
+;override-redirect = true
+
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+
+[module/i3]
+type = internal/i3
+format = <label-state> <label-mode>
+index-sort = true
+wrapping-scroll = false
+strip-wsnumbers = true
+enable-scroll = false
+fuzzy-match = true
+
+
+; Only show workspaces on the same output as the bar
+pin-workspaces = true
+
+label-mode-padding = 3
+label-mode-foreground = #000
+label-mode-background = ${colors.primary}
+
+
+; focused = Active workspace on focused monitor
+label-focused = %{F#5294e2}%icon%%{F-}  %name%
+label-focused-background = ${colors.background}
+label-focused-underline= ${colors.primary}
+label-focused-padding = 3
+
+; unfocused = Inactive workspace on any monitor
+label-unfocused = %icon%
+label-unfocused-padding = 3
+
+; visible = Active workspace on unfocused monitor
+label-visible =  %icon%  %name%
+label-visible-background = ${self.label-focused-background}
+label-visible-underline = ${self.label-focused-underline}
+label-visible-padding = ${self.label-focused-padding}
+
+; urgent = Workspace with urgency hint set
+label-urgent = %icon%  %name%
+label-urgent-background = ${colors.alert}
+label-urgent-padding = 3
+
+; Separator in between workspaces
+; label-separator = |
+
+ws-icon-0 = Web;
+ws-icon-1 = Terminal;
+ws-icon-2 = Documents;
+ws-icon-3 = Media;
+ws-icon-4 = Games;
+ws-icon-5 = Other;
+ws-icon-6 = Other;
+ws-icon-7 = Videochat;
+ws-icon-8 = Chats;
+ws-icon-9 = Music;
+
+[module/cpu]
+type = internal/cpu
+interval = 2
+format-prefix = ""
+format-prefix-padding = 1
+format-prefix-foreground = #ffa500
+format-underline = #ffa500
+label = %{A1:notify-send "$(ps -Ao user,comm,pid,pcpu --sort=-pcpu | head -n 6)":} %percentage:2%% %{A}
+
+
+[module/date]
+type = internal/date
+interval = 1
+
+date =
+date-alt = "%a %d. %b %Y"
+
+time = "%H:%M:%S"
+; time-alt = %H:%M:%S
+time-alt =
+
+format-prefix = 
+format-prefix-foreground = #0ff
+format-prefix-padding = 1
+format-underline = #0ff
+
+label = %date% %time%
+
+
+
+[module/network]
+type = internal/network
+interface = wlp4s0
+interval = 1.0
+format-connected = <label-connected>
+format-connected-foreground = ${colors.foreground}
+format-connected-underline = #9f78e1
+format-connected-prefix = 
+format-connected-prefix-padding = 1
+format-connected-prefix-foreground = #9f78e1
+label-connected = %{A1:nm-connection-editor:} %downspeed:9% %{A}
+
+format-disconnected = <label-disconnected>
+label-disconnected = %{A1:nm-connection-editor:} No connection %{A}
+format-disconnected-underline = ${colors.alert}
