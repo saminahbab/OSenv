@@ -55,11 +55,38 @@
 
   #+END_SRC
 
-
 * Modes
 ** Rust
 ** Python
 ** Go
+#+BEGIN_SRC emacs-lisp
+(defun custom-go-hook ()
+
+  (setq gofmt-command "goimports")
+  (add-hook 'before-save-hook 'gofmt-before-save)
+
+  ;; Key bindings specific to go-mode
+  (local-set-key (kbd "M-.") 'godef-jump)         ; Go to definition
+  (local-set-key (kbd "M-*") 'pop-tag-mark)       ; Return from whence you came
+  (local-set-key (kbd "M-p") 'compile)            ; Invoke compiler
+  (local-set-key (kbd "M-P") 'recompile)          ; Redo most recent compile cmd
+  (local-set-key (kbd "M-]") 'next-error)         ; Go to next error (or msg)
+  (local-set-key (kbd "M-[") 'previous-error)     ; Go to previous error or msg
+
+  )
+
+(setq lsp-gopls-staticcheck t)
+(setq lsp-eldoc-render-all t)
+(setq lsp-gopls-complete-unimported t)
+(setq compilation-window-height 14)
+(setq lsp-gopls-codelens nil)
+
+(use-package go-mode :mode "\\*\\.go")
+(add-hook 'go-mode-hook #'smartparens-mode)
+(add-hook 'go-mode-hook 'custom-go-hook)
+
+
+#+END_SRC
 ** Javascript
 ** Typescript
 ** Cypher
@@ -74,26 +101,147 @@
 
 
 * Packages
+** SaveHist
+#+BEGIN_SRC emacs-lisp
+  (use-package
+  savehist
+  :config (setq history-length 10000))
+(savehist-mode)
+  #+END_SRC
 ** Magit
 ** PDF-tools
 ** Ace Window
 ** Avy
 ** SmartParens
+#+BEGIN_SRC emacs-lisp
+  (use-package smartparens
+      :init (sp-use-smartparens-bindings))
+    (add-hook 'go-mode-hook #'smartparens-mode)
+    (add-hook 'python-mode-hook #'smartparens-mode)
+    (add-hook 'rust-mode-hook #'smartparens-mode)
+
+
+  #+END_SRC
 ** Rainbow Delimiters
 ** DeadGrep
 ** Spaceline
 ** Yasnippet
+#+BEGIN_SRC emacs-lisp
+(use-package
+  yasnippet
+  :ensure t
+  :init (yas-global-mode 1)
+  :bind (("C-c ]" . yas-expand-from-trigger-key))
+  :config (use-package
+            yasnippet-snippets
+            :ensure t)
+  (yas-reload-all))
+(setq yas-snippet-dirs (append yas-snippet-dirs
+                               '("snippets")))
+#+END_SRC
 ** Company
+#+BEGIN_SRC emacs-lisp
+  (use-package
+  company
+  :ensure t
+  :init (add-hook 'after-init-hook 'global-company-mode)
+  :config (setq company-idle-delay 0)
+  (setq company-minimum-prefix-length 1))
+  #+END_SRC
 ** Flycheck
+#+BEGIN_SRC emacs-lisp
+(use-package
+  flycheck
+  :ensure t
+  :bind (("C-c f p" . 'flycheck-previous-error)
+         ("C-c f n" . 'flycheck-next-error)
+         ("C-c f f" . flycheck-first-error)))
+
+#+END_SRC
 ** Indent Tools
 ** Helm
 ** Counsel
 Do I really need this? I am not sure I use this. Come back to this and revaluate
+#+BEGIN_SRC emacs-lisp
+(use-package
+  counsel
+  :config
+  ;; Use virtual buffers, this adds bookmarks and recentf to the
+  ;; switch-buffer function:
+  (setq ivy-use-virtual-buffers t)
+  ;; Candidate count format for ivy read. Show index and count.
+  (setq ivy-count-format "(%d/%d) ")
+  ;; I use big windows, so plenty of room for ivy mini buffer
+  (setq max-mini-window-height 0.5)
+  (setq ivy-height 20)
+  :bind
+  ;; Some standard keybindings, matching helm ones I used to have.
+  (("M-s o" . 'swiper)
+   ("M-x" . 'counsel-M-x)
+   ("C-x C-f" . 'counsel-find-file)
+   ;; These keybindings recommended by counsel docs.
+   ("<f1> f" . 'counsel-describe-function)
+   ("<f1> v" . 'counsel-describe-variable)
+   ("<f1> l" . 'counsel-find-library)
+   ("<f2> i" . 'counsel-info-lookup-symbol)
+   ("<f2> u" . 'counsel-unicode-char)
+   ;; use counsel to lookup bookmarks
+   ("C-x r l" . 'counsel-bookmark)
+   ;; Old keybindings I had from before switching to helm/ivy
+   ("<f11>" . nil)
+   ("<f11> s" . 'swiper)
+   ("<f11> g l" . 'counsel-git-log)
+   ("<f11> g b" . 'counsel-git-checkout)
+   ("<f11> g a" . 'counsel-ag)
+   ("C-c z p f" . 'counsel-projectile-find-file)
+   ("C-c z f f" . 'counsel-find-file)
+   ("C-c r" . 'ivy-resume)
+   ("<f11> u" . 'counsel-unicode-char)))
+#+END_SRC
+** Projectile
+#+BEGIN_SRC emacs-lisp
+(use-package
+  projectile
+  :ensure t
+  :config (define-key projectile-mode-map (kbd "C-x p") 'projectile-command-map)
+  (projectile-mode +1))
+(use-package
+  counsel-projectile
+  :bind
+  ;; Enable ripgrep with counsel.
+  (("C-c g" . #'counsel-projectile-rg)))
+
+#+END_SRC
+** Ivy
 * LSP
 ** Meat and Bones
+#+BEGIN_SRC emacs-lisp
+(use-package
+  lsp-mode
+  :ensure t
+  :config (add-hook 'python-mode-hook #'lsp)
+  (add-hook 'go-mode-hook #'lsp)
+  (add-hook 'rust-mode-hook #'lsp)
+  (add-hook 'terraform-mode #'lsp))
+#+END_SRC
 ** UI
+#+BEGIN_SRC emacs-lisp
+(use-package
+  lsp-ui
+  :ensure t
+  :commands lsp-ui-mode
+  :init)
+
+(setq lsp-ui-doc-enable t lsp-ui-peek-enable t lsp-ui-sideline-enable t lsp-ui-imenu-enable t
+      lsp-ui-flycheck-enable t lsp-ui-sideline-toggle-symbols-info t)
+
+#+END_SRC
 ** Tuning
 ** Ignore Files
+** Smex
+#+BEGIN_SRC emacs-lisp
+  (use-package smex)
+  #+END_SRC
 * Org
 What a package. Game changer.
 ** Agenda
@@ -101,6 +249,10 @@ What a package. Game changer.
 ** Roam
 ** Roam Server
 ** Roam Bibtex
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-h b") 'helm-bibtex)
+(global-set-key (kbd "C-h g") 'helm-do-grep-ag)
+  #+END_SRC
 ** Ref
 ** Noter
 ** Deft
