@@ -15,12 +15,23 @@
 ** Package Archives
 ** Other
 #+BEGIN_SRC emacs-lisp
+  (setq find-file-visit-truename t)
+(setq backup-directory-alist '(("." . "~/.saves")))
+(global-set-key (kbd "C-c m") 'magit)
 (setq find-file-visit-truename t)
   #+END_SRC
 * Theming/UI
 ** Font
 #+BEGIN_SRC emacs-lisp
 (set-frame-font "Menlo 10" nil t)
+  #+END_SRC
+** Org
+#+BEGIN_SRC emacs-lisp
+
+(setq org-src-fontify-natively t
+    org-src-tab-acts-natively t
+    org-confirm-babel-evaluate nil
+    org-edit-src-content-indentation 0)
   #+END_SRC
 ** Maximise Real Estate
 #+BEGIN_SRC emacs-lisp
@@ -41,6 +52,14 @@
   #+END_SRC
 ** Theme
 #+BEGIN_SRC emacs-lisp
+    (setq sml/no-confirm-load-theme t)
+  (load-theme 'jetbrains-darcula t)
+
+(use-package
+  spaceline
+  :after (spaceline-emacs-theme)
+  :ensure t)
+
 (setq sml/no-confirm-load-theme t)
 
   #+END_SRC
@@ -80,11 +99,20 @@
   :hook (rust-mode . cargo-minor-mode))
 
 
+(add-hook 'rust-mode-hook #'aggressive-indent-mode)
+
+
   #+END_SRC
-*** Flycheck
+*** LSP
 #+BEGIN_SRC emacs-lisp
-(use-package flycheck-rust
-  :config (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+(setq lsp-rust-server 'rust-analyzer)
+  #+END_SRC
+*** Flycheck and Company
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck-rust
+    :config (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+
+(add-hook 'rust-mode-hook 'company-mode)
   #+END_SRC
 *** Shortcuts
 #+BEGIN_SRC emacs-lisp
@@ -95,6 +123,23 @@
 
   #+END_SRC
 ** Python
+**
+#+BEGIN_SRC emacs-lisp
+
+(eval-after-load 'python-mode-hook
+  (lambda () (local-set-key (kbd "C-c <tab>") 'python-black-buffer)))
+
+#+END_SRC
+*** LSP
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+                          (require 'lsp-pyright)
+                          (lsp))))  ; or lsp-deferred
+
+
+#+END_SRC
 ** Go
 #+BEGIN_SRC emacs-lisp
 (defun custom-go-hook ()
@@ -122,22 +167,68 @@
 (add-hook 'go-mode-hook #'smartparens-mode)
 (add-hook 'go-mode-hook 'custom-go-hook)
 
+(add-hook 'go-mode-hook #'aggressive-indent-mode)
 
 #+END_SRC
-** Javascript
-** Typescript
+** Javascript/Typescript
+Very little JS TS work atm but this config isnt amazing. needs more work.
+#+BEGIN_SRC emacs-lisp
+
+(defun setup-tide-mode()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+
+  ;; company is an optional dependency. You have to
+  ;; install it separately via package-install
+  ;; `M-x package-install [ret] company`
+  (company-mode +1))
+
+(use-package tide
+  :ensure t
+  :after (rjsx-mode company flycheck)
+  :hook (rjsx-mode . setup-tide-mode))
+
+(add-hook 'before-save-hook 'tide-format-before-save)
+
+(add-hook 'typescript-mode-hook #'setup-tide-mode)
+
+
+
+#+END_SRC
 ** Cypher
+#+BEGIN_SRC emacs-lisp
+
+(use-package cypher-mode
+  :ensure t
+  :mode "\\.cql")
+
+#+END_SRC
 ** Terraform
+#+BEGIN_SRC emacs-lisp
+
+(add-hook 'terraform-mode-hook #'lsp)
+#+END_SRC
 ** gql
 * Key Remaps
-** buffers
+
 #+BEGIN_SRC emacs-lisp
   (define-key global-map (kbd "M-k") 'kill-this-buffer)
-  #+END_SRC
-** Text Editing
+(global-set-key (kbd "C-z") 'undo)
+(global-set-key (kbd "C-c c r" ) 'comment-region)
+(global-set-key (kbd  "C-c c u") 'uncomment-region)
+(global-set-key [?\M-h] 'delete-backward-char)
 
+  #+END_SRC
 
 * Packages
+
+** Multi Cursor
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-c e c") 'mc/edit-lines)
+#+END_SRC
 ** SaveHist
 #+BEGIN_SRC emacs-lisp
   (use-package
@@ -145,14 +236,18 @@
   :config (setq history-length 10000))
 (savehist-mode)
   #+END_SRC
-** Magit
+
 ** PDF-tools
+make sure that you have pdf tools installed.
 #+BEGIN_SRC emacs-lisp
   (pdf-loader-install)
 
   #+END_SRC
 ** Ace Window
-** Avy
+#+BEGIN_SRC emacs-lisp
+(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+(global-set-key (kbd "M-o") 'ace-window)
+#+END_SRC
 ** SmartParens
 #+BEGIN_SRC emacs-lisp
   (use-package smartparens
@@ -189,15 +284,20 @@
   (yas-reload-all))
 (setq yas-snippet-dirs (append yas-snippet-dirs
                                '("snippets")))
+
 #+END_SRC
 ** Company
 #+BEGIN_SRC emacs-lisp
-  (use-package
-  company
-  :ensure t
-  :init (add-hook 'after-init-hook 'global-company-mode)
-  :config (setq company-idle-delay 0)
-  (setq company-minimum-prefix-length 1))
+(use-package
+company
+:ensure t
+:init (add-hook 'after-init-hook 'global-company-mode)
+:config (setq company-idle-delay 0)
+(setq company-minimum-prefix-length 1))
+
+(setq company-tooltip-align-annotations t)
+
+
   #+END_SRC
 ** Flycheck
 #+BEGIN_SRC emacs-lisp
@@ -220,6 +320,9 @@
  bibtex-completion-library-path "~/Zotero/"
  bibtex-completion-pdf-field "file"
  )
+
+(global-set-key (kbd "C-h b") 'helm-bibtex)
+(global-set-key (kbd "C-h g") 'helm-do-grep-ag)
 
   #+END_SRC
 
@@ -274,8 +377,24 @@ Do I really need this? I am not sure I use this. Come back to this and revaluate
   ;; Enable ripgrep with counsel.
   (("C-c g" . #'counsel-projectile-rg)))
 
+(use-package
+  counsel-projectile
+  :bind
+  ;; Enable ripgrep with counsel.
+  (("C-c g" . #'counsel-projectile-rg)))
+
 #+END_SRC
 ** Ivy
+#+BEGIN_SRC emacs-lisp
+
+(ivy-mode 1)
+(use-package
+  ivy-rich
+  :init (setq ivy-rich-switch-buffer-name-max-length 100)
+  (ivy-rich-mode))
+
+
+#+END_SRC
 ** Avy
 #+BEGIN_SRC emacs-lisp
   (use-package avy)
@@ -296,13 +415,14 @@ Do I really need this? I am not sure I use this. Come back to this and revaluate
 * LSP
 ** Meat and Bones
 #+BEGIN_SRC emacs-lisp
-(use-package
-  lsp-mode
-  :ensure t
-  :config (add-hook 'python-mode-hook #'lsp)
-  (add-hook 'go-mode-hook #'lsp)
-  (add-hook 'rust-mode-hook #'lsp)
-  (add-hook 'terraform-mode #'lsp))
+    (use-package
+      lsp-mode
+      :ensure t
+
+      :config (add-hook 'python-mode-hook #'lsp)
+      (add-hook 'go-mode-hook #'lsp)
+      (add-hook 'rust-mode-hook #'lsp)
+      (add-hook 'terraform-mode #'lsp))
 #+END_SRC
 ** UI
 #+BEGIN_SRC emacs-lisp
@@ -336,7 +456,22 @@ Do I really need this? I am not sure I use this. Come back to this and revaluate
   #+END_SRC
 * Org
 What a package. Game changer.
+#+BEGIN_SRC emacs-lisp
+
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+(add-hook 'org-mode-hook 'org-indent-mode)
+
+(eval-after-load 'org
+  (progn
+    (define-key org-mode-map (kbd "C-c ]") yas-expand-only-for-last-commands)))
+
+
+#+END_SRC
 ** Agenda
+#+BEGIN_SRC emacs-lisp
+
+(setq org-agenda-files (list "~/orgs/gtd.org" "~/orgs/code.org" "~/orgs/journal.org"))
+#+END_SRC
 ** Capture
 *** Init
 #+BEGIN_SRC emacs-lisp
@@ -436,40 +571,42 @@ What a package. Game changer.
 *** Templates
 #+BEGIN_SRC emacs-lisp
 
-  (setq orb-preformat-keywords   '(("citekey" . "=key=") "title" "url" "file" "author-or-editor" "keywords"))
-
-  (setq orb-templates  `(
-              ("r" "ref" plain
-              (function org-roam-capture--get-point)
-              ""
-              :file-name "refs/${citekey}"
-              :head ,(s-join "\n"
-                             (list
-                              (concat "#+title: "
-                                      orb-title-format)
-                              "#+roam_key: ${ref}"
-                              "#+created: %U"
-                              "#+last_modified: %U\n\n"))
-              :unnarrowed t)
-
-             ("n" "ref + noter" plain
-              (function org-roam-capture--get-point)
-              ""
-              :file-name "refs/${citekey}"
-              :head ,(s-join "\n"
-                             (list
-                              "#+title:${title}."
-                              "#+ROAM_TAGS:"
-                              "#+roam_key: ${ref}"
-                              ""
-                              "* Notes :noter:"
-                              ":PROPERTIES:"
-                              ":NOTER_DOCUMENT: %(orb-process-file-field \"${citekey}\")"
-                              ":NOTER_PAGE:"
-                              ":END:\n\n")))))
+(setq orb-preformat-keywords   '(("citekey" . "=key=") "title" "url" "file" "author-or-editor" "keywords"))
 
   (defvar orb-title-format "${author-or-editor-abbrev} (${date}).  ${title}."
         "Format of the title to use for `orb-templates'.")
+
+
+(setq orb-templates  `(
+            ("r" "ref" plain
+            (function org-roam-capture--get-point)
+            ""
+            :file-name "refs/${citekey}"
+            :head ,(s-join "\n"
+                           (list
+                            (concat "#+title: "
+                                    orb-title-format)
+                            "#+roam_key: ${ref}"
+                            "#+created: %U"
+                            "#+last_modified: %U\n\n"))
+            :unnarrowed t)
+
+           ("n" "ref + noter" plain
+            (function org-roam-capture--get-point)
+            ""
+            :file-name "refs/${citekey}"
+            :head ,(s-join "\n"
+                           (list
+                            "#+title:${title}."
+                            "#+ROAM_TAGS:"
+                            "#+roam_key: ${ref}"
+                            ""
+                            "* Notes :noter:"
+                            ":PROPERTIES:"
+                            ":NOTER_DOCUMENT: %(orb-process-file-field \"${citekey}\")"
+                            ":NOTER_PAGE:"
+                            ":END:\n\n")))))
+
 
 
 
