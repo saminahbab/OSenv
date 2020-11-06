@@ -12,6 +12,8 @@
   (package-refresh-contents))
 (package-refresh-contents)
 
+(add-hook 'rust-mode-hook 'company-mode)
+
 (defvar my-packages
   '(
     ;; General

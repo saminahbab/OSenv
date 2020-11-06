@@ -43,6 +43,12 @@
 (setq initial-scratch-message nil)
 
 
+
+(setq org-src-fontify-natively t
+    org-src-tab-acts-natively t
+    org-confirm-babel-evaluate nil
+    org-edit-src-content-indentation 0)
+
 ;; Highlight Current Line
 (add-hook 'after-init-hook 'global-hl-line-mode)
 
@@ -138,6 +144,7 @@
   :init (sp-use-smartparens-bindings))
 (add-hook 'go-mode-hook #'smartparens-mode)
 (add-hook 'python-mode-hook #'smartparens-mode)
+(add-hook 'rust-mode-hook #'smartparens-mode)
 
 (use-package
   flycheck
@@ -185,7 +192,11 @@
 ;; lsp tuning
 (setq gc-cons-threshold 200000000)
 (setq read-process-output-max ( * 1024 1024) )
+
 (setq lsp-prefer-capf t)
+(setq lsp-completion-provider :capf)
+(setq lsp-completion-enable t)
+
 
 (add-to-list 'lsp-file-watch-ignored "[/\\\\]build$")
 (add-to-list 'lsp-file-watch-ignored "[/\\\\]data")
