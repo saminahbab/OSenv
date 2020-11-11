@@ -2,6 +2,7 @@
 ** Add to list load Path
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp")
+(package-refresh-contents)
 #+END_SRC
 ** Require package
 #+BEGIN_SRC emacs-lisp
@@ -53,14 +54,17 @@
 ** Theme
 #+BEGIN_SRC emacs-lisp
     (setq sml/no-confirm-load-theme t)
-  (load-theme 'jetbrains-darcula t)
+
+(use-package jetbrains-darcula-theme
+  :config
+  (load-theme 'jetbrains-darcula t))
 
 (use-package
   spaceline
   :after (spaceline-emacs-theme)
   :ensure t)
 
-(setq sml/no-confirm-load-theme t)
+
 
   #+END_SRC
 ** General Pre Save
@@ -240,7 +244,7 @@ Very little JS TS work atm but this config isnt amazing. needs more work.
 ** PDF-tools
 make sure that you have pdf tools installed.
 #+BEGIN_SRC emacs-lisp
-  (pdf-loader-install)
+  (pdf-tools-install)
 
   #+END_SRC
 ** Ace Window
@@ -397,7 +401,8 @@ Do I really need this? I am not sure I use this. Come back to this and revaluate
 #+END_SRC
 ** Avy
 #+BEGIN_SRC emacs-lisp
-  (use-package avy)
+  (use-package avy
+    :ensure)
 
 (global-set-key (kbd "C-;") 'avy-goto-char)
 (global-set-key (kbd "C-'") 'avy-goto-char-2)
@@ -616,6 +621,7 @@ What a package. Game changer.
 #+BEGIN_SRC emacs-lisp
 
 (use-package org-ref
+  :ensure
     :config
     (setq
          org-ref-completion-library 'org-ref-ivy-cite
@@ -675,6 +681,7 @@ What a package. Game changer.
 #+BEGIN_SRC emacs-lisp
 
 (use-package org-noter-pdftools
+:ensure
   :after org-noter
   :config
   (with-eval-after-load 'pdf-annot
@@ -703,6 +710,7 @@ This needs further configuring. Not happy with the way that it processes images 
 ** Journal
 Better than Dailies in my opinion, and also separate to your personal roam graphs
 #+BEGIN_SRC emacs-lisp
-(use-package org-journal)
+(use-package org-journal
+  :ensure)
 
   #+END_SRC
