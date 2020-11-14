@@ -4,6 +4,14 @@
 
 (require 'package)
 (package-initialize)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+
+(add-to-list 'package-archives
+	     '("gnu" . "https://elpa.gnu.org/packages/") t)
+
+(when (not package-archive-contents)
+  (package-refresh-contents))
+(package-refresh-contents)
 
 (setq create-lockfiles nil)
 
@@ -44,7 +52,7 @@
 
 (add-hook 'before-save-hook 'whitespace-cleanup)
 (add-hook 'before-save-hook (lambda()
-                              (delete-trailing-whitespace)))
+			      (delete-trailing-whitespace)))
 
 (use-package dashboard
 :ensure t
@@ -72,8 +80,8 @@
 (add-hook 'rust-mode-hook 'company-mode)
 
 (add-hook 'rust-mode-hook
-          (lambda ()
-            (local-set-key (kbd "C-c <tab>") #'rust-format-buffer)))
+	  (lambda ()
+	    (local-set-key (kbd "C-c <tab>") #'rust-format-buffer)))
 
 (eval-after-load 'python-mode-hook
   (lambda () (local-set-key (kbd "C-c <tab>") 'python-black-buffer)))
@@ -81,8 +89,8 @@
 (use-package lsp-pyright
   :ensure t
   :hook (python-mode . (lambda ()
-                          (require 'lsp-pyright)
-                          (lsp))))  ; or lsp-deferred
+			  (require 'lsp-pyright)
+			  (lsp))))  ; or lsp-deferred
 
 (defun custom-go-hook ()
 
@@ -138,6 +146,12 @@
 
 (add-hook 'terraform-mode-hook #'lsp)
 
+(use-package yaml-mode
+  :mode (("\\.yaml\\'" . yaml-mode)
+	 ("\\.yml\\'" . yaml-mode))
+  :ensure t)
+(add-hook 'yaml-mode-hook #'lsp)
+
 (define-key global-map (kbd "M-k") 'kill-this-buffer)
 (global-set-key (kbd "C-z") 'undo)
 (global-set-key (kbd "C-c c r" ) 'comment-region)
@@ -176,11 +190,11 @@
   :init (yas-global-mode 1)
   :bind (("C-c ]" . yas-expand-from-trigger-key))
   :config (use-package
-            yasnippet-snippets
-            :ensure t)
+	    yasnippet-snippets
+	    :ensure t)
   (yas-reload-all))
 (setq yas-snippet-dirs (append yas-snippet-dirs
-                               '("snippets")))
+			       '("snippets")))
 
 (use-package
 company
@@ -195,8 +209,8 @@ company
   flycheck
   :ensure t
   :bind (("C-c f p" . 'flycheck-previous-error)
-         ("C-c f n" . 'flycheck-next-error)
-         ("C-c f f" . flycheck-first-error)))
+	 ("C-c f n" . 'flycheck-next-error)
+	 ("C-c f f" . flycheck-first-error)))
 
 (setq
 ;; helm-bibtex-bibliography '("~/bibtex/bibs.bib")
@@ -274,10 +288,21 @@ company
 (global-set-key (kbd "C-#") 'avy-goto-line)
 
 (setq avy-keys
-      (nconc (number-sequence ?a ?z)
-             (number-sequence ?A ?Z)
-             (number-sequence ?1 ?9)
-             '(?0)))
+(nconc (number-sequence ?a ?z)
+       (number-sequence ?A ?Z)
+       (number-sequence ?1 ?9)
+       '(?0)))
+
+(use-package smart-shift
+  :ensure t)
+
+(global-smart-shift-mode 1)
+(setq smart-shift-indentation-level 2)
+
+(use-package highlight-indent-guides
+  :ensure t)
+
+(add-hook 'yaml-mode-hook 'highlight-indent-guides-mode)
 
 (use-package
   lsp-mode
@@ -310,24 +335,20 @@ company
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 (add-hook 'org-mode-hook 'org-indent-mode)
 
-(eval-after-load 'org
-  (progn
-    (define-key org-mode-map (kbd "C-c ]") yas-expand-only-for-last-commands)))
-
 (setq org-agenda-files (list "~/orgs/gtd.org" "~/orgs/code.org" "~/orgs/journal.org"))
 
 (setq org-capture-templates '(("t" "Todo [Inbox]" entry (file+headline "~/orgs/gtd.org" "Tasks")
-                                 "* TODO %?\n  %i\n ")
-                                ("c" "Code" entry (file+headline "~/orgs/code.org" "Code")
-                                 "* TODO %?\n %i\n %a")
-                                ("j" "Journal" entry (file+datetree "~/orgs/journal.org")
-                                 "* %?\nEntered on %U\n  %i\n  %a")
-                                ("T" "Tickler" entry (file+headline "~/orgs/tickler.org" "Tickler")
-                                 "* %i%? \n %U")))
+				 "* TODO %?\n  %i\n ")
+				("c" "Code" entry (file+headline "~/orgs/code.org" "Code")
+				 "* TODO %?\n %i\n %a")
+				("j" "Journal" entry (file+datetree "~/orgs/journal.org")
+				 "* %?\nEntered on %U\n  %i\n  %a")
+				("T" "Tickler" entry (file+headline "~/orgs/tickler.org" "Tickler")
+				 "* %i%? \n %U")))
 
 (setq org-refile-targets (quote (("~/orgs/tickler.org" :maxlevel . 3)
-                                 ("~/orgs/gtd.org" :level . 2)
-                                 ("~/orgs/someday.org" :level . 1))))
+				 ("~/orgs/gtd.org" :level . 2)
+				 ("~/orgs/someday.org" :level . 1))))
 
 (define-key global-map (kbd "C-c o")
   (lambda ()
@@ -346,39 +367,39 @@ company
       :custom
       (org-roam-directory "~/orgs/roam")
       :bind (:map org-roam-mode-map
-              (("C-c n l" . org-roam)
-               ("C-c n f" . org-roam-find-file)
-               ("C-c n g" . org-roam-graph-show)
-               )
-              :map org-mode-map
-              (("C-c n i" . org-roam-insert))
-              (("C-c n I" . org-roam-insert-immediate)))
+	      (("C-c n l" . org-roam)
+	       ("C-c n f" . org-roam-find-file)
+	       ("C-c n g" . org-roam-graph-show)
+	       )
+	      :map org-mode-map
+	      (("C-c n i" . org-roam-insert))
+	      (("C-c n I" . org-roam-insert-immediate)))
       )
 
 (setq org-roam-capture-templates
-        '(("d" "default" plain
-           (function org-roam-capture--get-point)
-           "%?"
-           :file-name "%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+title: ${title}\n#+ROAM_TAGS:\n#+created: %u\n#+last_modified: %U\n\n\n\n"
-           :unnarrowed t))
+	'(("d" "default" plain
+	   (function org-roam-capture--get-point)
+	   "%?"
+	   :file-name "%<%Y%m%d%H%M%S>-${slug}"
+	   :head "#+title: ${title}\n#+ROAM_TAGS:\n#+created: %u\n#+last_modified: %U\n\n\n\n"
+	   :unnarrowed t))
 
-        )
+	)
 
 (use-package org-roam-server
   :ensure t
   :config
   (setq org-roam-server-host "127.0.0.1"
-        org-roam-server-port 8081
-        org-roam-server-authenticate nil
-        org-roam-server-export-inline-images t
-        org-roam-server-serve-files nil
-        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
-        org-roam-server-network-poll t
-        org-roam-server-network-arrows nil
-        org-roam-server-network-label-truncate t
-        org-roam-server-network-label-truncate-length 60
-        org-roam-server-network-label-wrap-length 20))
+	org-roam-server-port 8081
+	org-roam-server-authenticate nil
+	org-roam-server-export-inline-images t
+	org-roam-server-serve-files nil
+	org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+	org-roam-server-network-poll t
+	org-roam-server-network-arrows nil
+	org-roam-server-network-label-truncate t
+	org-roam-server-network-label-truncate-length 60
+	org-roam-server-network-label-wrap-length 20))
 
 (server-start)
 
@@ -387,69 +408,70 @@ company
 :load-path "~/bibtex/bibs.bib" ;Modify with your own path
 :hook (org-roam-mode . org-roam-bibtex-mode)
 :bind (:map org-mode-map
-            (("C-c n a" . orb-note-actions)))
+	    (("C-c n a" . orb-note-actions)))
  )
 
 (setq orb-preformat-keywords   '(("citekey" . "=key=") "title" "url" "file" "author-or-editor" "keywords"))
 
   (defvar orb-title-format "${author-or-editor-abbrev} (${date}).  ${title}."
-        "Format of the title to use for `orb-templates'.")
+	"Format of the title to use for `orb-templates'.")
 
 
 (setq orb-templates  `(
-            ("r" "ref" plain
-            (function org-roam-capture--get-point)
-            ""
-            :file-name "refs/${citekey}"
-            :head ,(s-join "\n"
-                           (list
-                            (concat "#+title: "
-                                    orb-title-format)
-                            "#+roam_key: ${ref}"
-                            "#+created: %U"
-                            "#+last_modified: %U\n\n"))
-            :unnarrowed t)
+	    ("r" "ref" plain
+	    (function org-roam-capture--get-point)
+	    ""
+	    :file-name "refs/${citekey}"
+	    :head ,(s-join "\n"
+			   (list
+			    (concat "#+title: "
+				    orb-title-format)
+			    "#+roam_key: ${ref}"
+			    "#+created: %U"
+			    "#+last_modified: %U\n\n"))
+	    :unnarrowed t)
 
-           ("n" "ref + noter" plain
-            (function org-roam-capture--get-point)
-            ""
-            :file-name "refs/${citekey}"
-            :head ,(s-join "\n"
-                           (list
-                            "#+title:${title}."
-                            "#+ROAM_TAGS:"
-                            "#+roam_key: ${ref}"
-                            ""
-                            "* Notes :noter:"
-                            ":PROPERTIES:"
-                            ":NOTER_DOCUMENT: %(orb-process-file-field \"${citekey}\")"
-                            ":NOTER_PAGE:"
-                            ":END:\n\n")))))
+	   ("n" "ref + noter" plain
+	    (function org-roam-capture--get-point)
+	    ""
+	    :file-name "refs/${citekey}"
+	    :head ,(s-join "\n"
+			   (list
+			    "#+title:${title}."
+			    "#+ROAM_TAGS:"
+			    "#+roam_key: ${ref}"
+			    ""
+			    "* Notes :noter:"
+			    ":PROPERTIES:"
+			    ":NOTER_DOCUMENT: %(orb-process-file-field \"${citekey}\")"
+			    ":NOTER_PAGE:"
+			    ":END:\n\n")))))
 
 (use-package org-ref
     :config
     (setq
-         org-ref-completion-library 'org-ref-ivy-cite
-         org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-         org-ref-default-bibliography (list "~/bibtex/bibs.bib")
-         org-ref-bibliography-notes "~/orgs/bibnotes.org"
-         org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-         org-ref-notes-directory "~/orgs/notes/"
+	 org-ref-completion-library 'org-ref-ivy-cite
+	 org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
+	 org-ref-default-bibliography (list "~/bibtex/bibs.bib")
+	 org-ref-bibliography-notes "~/orgs/bibnotes.org"
+	 org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
+	 org-ref-notes-directory "~/orgs/notes/"
 
     ))
 
 (setq org-roam-capture-ref-templates
       '(("roam" "ref" plain (function org-roam-capture--get-point)
-         "%?"
-         :file-name "web/${slug}"
-         :head "#+TITLE: ${title}
+	 "%?"
+	 :file-name "web/${slug}"
+	 :head "#+TITLE: ${title}
 #+ROAM_KEY: ${ref}
 #+ROAM_ALIAS:
 #+ROAM_TAGS: Link
 #+Created: %u
 #+LAST_MODIFIED: %U
 
-         :unnarrowed t)))
+"
+	 :unnarrowed t)))
 
 (require 'org-roam-protocol)
 
