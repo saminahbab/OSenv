@@ -2,7 +2,7 @@
 #+PROPERTY: tangle: "~/OSenv/emacs/configuration.el"
 * General
 
-** Shorten yes to yN
+** Shorten yes to y
 #+BEGIN_SRC emacs-lisp
 (defalias 'yes-or-no-p 'y-or-n-p)
 
@@ -13,14 +13,21 @@
 #+END_SRC
 ** Require package
 #+BEGIN_SRC emacs-lisp
-  (require 'package)
-  (package-initialize)
+(require 'package)
+(package-initialize)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+
+(add-to-list 'package-archives
+	     '("gnu" . "https://elpa.gnu.org/packages/") t)
+
+(when (not package-archive-contents)
+  (package-refresh-contents))
+(package-refresh-contents)
   #+END_SRC
 ** Don't use lock files (which clutter view of a directory)
 #+BEGIN_SRC emacs-lisp
   (setq create-lockfiles nil)
   #+END_SRC
-** Package Archives
 ** Other
 #+BEGIN_SRC emacs-lisp
   (setq find-file-visit-truename t)
@@ -79,7 +86,7 @@
 #+BEGIN_SRC emacs-lisp
 (add-hook 'before-save-hook 'whitespace-cleanup)
 (add-hook 'before-save-hook (lambda()
-                              (delete-trailing-whitespace)))
+			      (delete-trailing-whitespace)))
 
   #+END_SRC
 ** Dashboard
@@ -130,8 +137,8 @@
 #+BEGIN_SRC emacs-lisp
 
 (add-hook 'rust-mode-hook
-          (lambda ()
-            (local-set-key (kbd "C-c <tab>") #'rust-format-buffer)))
+	  (lambda ()
+	    (local-set-key (kbd "C-c <tab>") #'rust-format-buffer)))
 
   #+END_SRC
 ** Python
@@ -147,8 +154,8 @@
 (use-package lsp-pyright
   :ensure t
   :hook (python-mode . (lambda ()
-                          (require 'lsp-pyright)
-                          (lsp))))  ; or lsp-deferred
+			  (require 'lsp-pyright)
+			  (lsp))))  ; or lsp-deferred
 
 
 #+END_SRC
@@ -224,6 +231,18 @@ Very little JS TS work atm but this config isnt amazing. needs more work.
 (add-hook 'terraform-mode-hook #'lsp)
 #+END_SRC
 ** gql
+** Yaml
+#+BEGIN_SRC emacs-lisp
+(use-package yaml-mode
+  :mode (("\\.yaml\\'" . yaml-mode)
+	 ("\\.yml\\'" . yaml-mode))
+  :ensure t)
+(add-hook 'yaml-mode-hook #'lsp)
+#+END_SRC
+
+#+RESULTS:
+| lsp |
+
 * Key Remaps
 
 #+BEGIN_SRC emacs-lisp
@@ -236,7 +255,6 @@ Very little JS TS work atm but this config isnt amazing. needs more work.
   #+END_SRC
 
 * Packages
-
 ** Multi Cursor
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-c e c") 'mc/edit-lines)
@@ -291,11 +309,11 @@ make sure that you have pdf tools installed.
   :init (yas-global-mode 1)
   :bind (("C-c ]" . yas-expand-from-trigger-key))
   :config (use-package
-            yasnippet-snippets
-            :ensure t)
+	    yasnippet-snippets
+	    :ensure t)
   (yas-reload-all))
 (setq yas-snippet-dirs (append yas-snippet-dirs
-                               '("snippets")))
+			       '("snippets")))
 
 #+END_SRC
 ** Company
@@ -317,8 +335,8 @@ company
   flycheck
   :ensure t
   :bind (("C-c f p" . 'flycheck-previous-error)
-         ("C-c f n" . 'flycheck-next-error)
-         ("C-c f f" . flycheck-first-error)))
+	 ("C-c f n" . 'flycheck-next-error)
+	 ("C-c f f" . flycheck-first-error)))
 
 #+END_SRC
 ** Indent Tools
@@ -419,11 +437,29 @@ Do I really need this? I am not sure I use this. Come back to this and revaluate
 *** Sequences
 #+BEGIN_SRC emacs-lisp
 (setq avy-keys
-      (nconc (number-sequence ?a ?z)
-             (number-sequence ?A ?Z)
-             (number-sequence ?1 ?9)
-             '(?0)))
+(nconc (number-sequence ?a ?z)
+       (number-sequence ?A ?Z)
+       (number-sequence ?1 ?9)
+       '(?0)))
   #+END_SRC
+** Smart Shift
+#+BEGIN_SRC emacs-lisp
+(use-package smart-shift
+  :ensure t)
+
+(global-smart-shift-mode 1)
+(setq smart-shift-indentation-level 2)
+
+#+END_SRC
+** Highlight Indentation
+#+BEGIN_SRC emacs-lisp
+(use-package highlight-indent-guides
+  :ensure t)
+
+(add-hook 'yaml-mode-hook 'highlight-indent-guides-mode)
+
+
+#+END_SRC
 * LSP
 ** Meat and Bones
 #+BEGIN_SRC emacs-lisp
@@ -473,10 +509,6 @@ What a package. Game changer.
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 (add-hook 'org-mode-hook 'org-indent-mode)
 
-(eval-after-load 'org
-  (progn
-    (define-key org-mode-map (kbd "C-c ]") yas-expand-only-for-last-commands)))
-
 
 #+END_SRC
 ** Agenda
@@ -488,17 +520,17 @@ What a package. Game changer.
 *** Init
 #+BEGIN_SRC emacs-lisp
    (setq org-capture-templates '(("t" "Todo [Inbox]" entry (file+headline "~/orgs/gtd.org" "Tasks")
-                                   "* TODO %?\n  %i\n ")
-                                  ("c" "Code" entry (file+headline "~/orgs/code.org" "Code")
-                                   "* TODO %?\n %i\n %a")
-                                  ("j" "Journal" entry (file+datetree "~/orgs/journal.org")
-                                   "* %?\nEntered on %U\n  %i\n  %a")
-                                  ("T" "Tickler" entry (file+headline "~/orgs/tickler.org" "Tickler")
-                                   "* %i%? \n %U")))
+				   "* TODO %?\n  %i\n ")
+				  ("c" "Code" entry (file+headline "~/orgs/code.org" "Code")
+				   "* TODO %?\n %i\n %a")
+				  ("j" "Journal" entry (file+datetree "~/orgs/journal.org")
+				   "* %?\nEntered on %U\n  %i\n  %a")
+				  ("T" "Tickler" entry (file+headline "~/orgs/tickler.org" "Tickler")
+				   "* %i%? \n %U")))
 
   (setq org-refile-targets (quote (("~/orgs/tickler.org" :maxlevel . 3)
-                                   ("~/orgs/gtd.org" :level . 2)
-                                   ("~/orgs/someday.org" :level . 1))))
+				   ("~/orgs/gtd.org" :level . 2)
+				   ("~/orgs/someday.org" :level . 1))))
 
 
 #+END_SRC
@@ -527,26 +559,26 @@ What a package. Game changer.
       :custom
       (org-roam-directory "~/orgs/roam")
       :bind (:map org-roam-mode-map
-              (("C-c n l" . org-roam)
-               ("C-c n f" . org-roam-find-file)
-               ("C-c n g" . org-roam-graph-show)
-               )
-              :map org-mode-map
-              (("C-c n i" . org-roam-insert))
-              (("C-c n I" . org-roam-insert-immediate)))
+	      (("C-c n l" . org-roam)
+	       ("C-c n f" . org-roam-find-file)
+	       ("C-c n g" . org-roam-graph-show)
+	       )
+	      :map org-mode-map
+	      (("C-c n i" . org-roam-insert))
+	      (("C-c n I" . org-roam-insert-immediate)))
       )
   #+END_SRC
 *** Templates
 #+BEGIN_SRC emacs-lisp
 (setq org-roam-capture-templates
-        '(("d" "default" plain
-           (function org-roam-capture--get-point)
-           "%?"
-           :file-name "%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+title: ${title}\n#+ROAM_TAGS:\n#+created: %u\n#+last_modified: %U\n\n\n\n"
-           :unnarrowed t))
+	'(("d" "default" plain
+	   (function org-roam-capture--get-point)
+	   "%?"
+	   :file-name "%<%Y%m%d%H%M%S>-${slug}"
+	   :head "#+title: ${title}\n#+ROAM_TAGS:\n#+created: %u\n#+last_modified: %U\n\n\n\n"
+	   :unnarrowed t))
 
-        )
+	)
   #+END_SRC
 
 ** Roam Server
@@ -555,16 +587,16 @@ What a package. Game changer.
   :ensure t
   :config
   (setq org-roam-server-host "127.0.0.1"
-        org-roam-server-port 8081
-        org-roam-server-authenticate nil
-        org-roam-server-export-inline-images t
-        org-roam-server-serve-files nil
-        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
-        org-roam-server-network-poll t
-        org-roam-server-network-arrows nil
-        org-roam-server-network-label-truncate t
-        org-roam-server-network-label-truncate-length 60
-        org-roam-server-network-label-wrap-length 20))
+	org-roam-server-port 8081
+	org-roam-server-authenticate nil
+	org-roam-server-export-inline-images t
+	org-roam-server-serve-files nil
+	org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+	org-roam-server-network-poll t
+	org-roam-server-network-arrows nil
+	org-roam-server-network-label-truncate t
+	org-roam-server-network-label-truncate-length 60
+	org-roam-server-network-label-wrap-length 20))
 
 (server-start)
   #+END_SRC
@@ -576,7 +608,7 @@ What a package. Game changer.
   :load-path "~/bibtex/bibs.bib" ;Modify with your own path
   :hook (org-roam-mode . org-roam-bibtex-mode)
   :bind (:map org-mode-map
-              (("C-c n a" . orb-note-actions)))
+	      (("C-c n a" . orb-note-actions)))
    )
 
   #+END_SRC
@@ -586,38 +618,38 @@ What a package. Game changer.
 (setq orb-preformat-keywords   '(("citekey" . "=key=") "title" "url" "file" "author-or-editor" "keywords"))
 
   (defvar orb-title-format "${author-or-editor-abbrev} (${date}).  ${title}."
-        "Format of the title to use for `orb-templates'.")
+	"Format of the title to use for `orb-templates'.")
 
 
 (setq orb-templates  `(
-            ("r" "ref" plain
-            (function org-roam-capture--get-point)
-            ""
-            :file-name "refs/${citekey}"
-            :head ,(s-join "\n"
-                           (list
-                            (concat "#+title: "
-                                    orb-title-format)
-                            "#+roam_key: ${ref}"
-                            "#+created: %U"
-                            "#+last_modified: %U\n\n"))
-            :unnarrowed t)
+	    ("r" "ref" plain
+	    (function org-roam-capture--get-point)
+	    ""
+	    :file-name "refs/${citekey}"
+	    :head ,(s-join "\n"
+			   (list
+			    (concat "#+title: "
+				    orb-title-format)
+			    "#+roam_key: ${ref}"
+			    "#+created: %U"
+			    "#+last_modified: %U\n\n"))
+	    :unnarrowed t)
 
-           ("n" "ref + noter" plain
-            (function org-roam-capture--get-point)
-            ""
-            :file-name "refs/${citekey}"
-            :head ,(s-join "\n"
-                           (list
-                            "#+title:${title}."
-                            "#+ROAM_TAGS:"
-                            "#+roam_key: ${ref}"
-                            ""
-                            "* Notes :noter:"
-                            ":PROPERTIES:"
-                            ":NOTER_DOCUMENT: %(orb-process-file-field \"${citekey}\")"
-                            ":NOTER_PAGE:"
-                            ":END:\n\n")))))
+	   ("n" "ref + noter" plain
+	    (function org-roam-capture--get-point)
+	    ""
+	    :file-name "refs/${citekey}"
+	    :head ,(s-join "\n"
+			   (list
+			    "#+title:${title}."
+			    "#+ROAM_TAGS:"
+			    "#+roam_key: ${ref}"
+			    ""
+			    "* Notes :noter:"
+			    ":PROPERTIES:"
+			    ":NOTER_DOCUMENT: %(orb-process-file-field \"${citekey}\")"
+			    ":NOTER_PAGE:"
+			    ":END:\n\n")))))
 
 
 
@@ -630,12 +662,12 @@ What a package. Game changer.
 (use-package org-ref
     :config
     (setq
-         org-ref-completion-library 'org-ref-ivy-cite
-         org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-         org-ref-default-bibliography (list "~/bibtex/bibs.bib")
-         org-ref-bibliography-notes "~/orgs/bibnotes.org"
-         org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-         org-ref-notes-directory "~/orgs/notes/"
+	 org-ref-completion-library 'org-ref-ivy-cite
+	 org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
+	 org-ref-default-bibliography (list "~/bibtex/bibs.bib")
+	 org-ref-bibliography-notes "~/orgs/bibnotes.org"
+	 org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
+	 org-ref-notes-directory "~/orgs/notes/"
 
     ))
 
@@ -645,16 +677,17 @@ What a package. Game changer.
 #+BEGIN_SRC emacs-lisp
 (setq org-roam-capture-ref-templates
       '(("roam" "ref" plain (function org-roam-capture--get-point)
-         "%?"
-         :file-name "web/${slug}"
-         :head "#+TITLE: ${title}
+	 "%?"
+	 :file-name "web/${slug}"
+	 :head "#+TITLE: ${title}
 #+ROAM_KEY: ${ref}
 #+ROAM_ALIAS:
 #+ROAM_TAGS: Link
 #+Created: %u
 #+LAST_MODIFIED: %U
 
-         :unnarrowed t)))
+"
+	 :unnarrowed t)))
 
 
   #+END_SRC
