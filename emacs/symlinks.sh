@@ -5,4 +5,4 @@
 mkdir ~/.emacs.d/lisp
 
 ln -s $(pwd)/init.el ~/.emacs.d/init.el
-ln -s $(pwd)/init.org ~/.emacs.d/lisp/init.org
+ln -s $(pwd)/configuration.el ~/.emacs.d/lisp/configuration.el
