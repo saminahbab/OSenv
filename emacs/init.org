@@ -22,6 +22,23 @@
   (setq create-lockfiles nil)
   #+END_SRC
 ** Package Archives
+ #+BEGIN_SRC emacs-lisp
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+
+(add-to-list 'package-archives
+             '("gnu" . "https://elpa.gnu.org/packages/") t)
+
+(when (not package-archive-contents)
+  (package-refresh-contents))
+(package-refresh-contents)
+
+
+#+END_SRC
+
+#+RESULTS:
+: ((melpa . http://melpa.org/packages/) (gnu . https://elpa.gnu.org/packages/))
+
 ** Other
 #+BEGIN_SRC emacs-lisp
   (setq find-file-visit-truename t)
