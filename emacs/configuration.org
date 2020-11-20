@@ -255,10 +255,31 @@ Very little JS TS work atm but this config isnt amazing. needs more work.
   #+END_SRC
 
 * Packages
-** Multi Cursor
+
+** Hydra
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-c e c") 'mc/edit-lines)
+(use-package hydra
+  :ensure t)
+
 #+END_SRC
+
+#+RESULTS:
+
+*** Flycheck
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-flycheck ()
+  "Move around flycheck errors"
+  ("n" flycheck-next-error "next")
+  ("p" flycheck-previous-error "previous")
+  ("f" flycheck-first-error "first")
+  ("l" flycheck-list-errors "list")
+  )
+
+#+END_SRC
+
+#+RESULTS:
+: hydra-flycheck/body
+
 ** SaveHist
 #+BEGIN_SRC emacs-lisp
   (use-package
@@ -460,7 +481,13 @@ Do I really need this? I am not sure I use this. Come back to this and revaluate
 
 
 #+END_SRC
-* LSP
+** Multiple Cursors
+#+BEGIN_SRC emacs-lisp
+(use-package multiple-cursors
+  :ensure t)
+
+#+END_SRC
+* Lsp
 ** Meat and Bones
 #+BEGIN_SRC emacs-lisp
     (use-package
