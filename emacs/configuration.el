@@ -161,12 +161,13 @@
 (use-package hydra
   :ensure t)
 
-(defhydra hydra-flycheck ()
+(defhydra hydra-flycheck (global-map "C-c f")
   "Move around flycheck errors"
   ("n" flycheck-next-error "next")
   ("p" flycheck-previous-error "previous")
   ("f" flycheck-first-error "first")
-  ("l" flycheck-list-errors "list"))
+  ("l" flycheck-list-errors "list")
+  )
 
 (use-package
   savehist
@@ -216,9 +217,7 @@ company
 (use-package
   flycheck
   :ensure t
-  :bind (("C-c f p" . 'flycheck-previous-error)
-         ("C-c f n" . 'flycheck-next-error)
-         ("C-c f f" . flycheck-first-error)))
+)
 
 (setq
 ;; helm-bibtex-bibliography '("~/bibtex/bibs.bib")
@@ -346,6 +345,57 @@ company
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 (add-hook 'org-mode-hook 'org-indent-mode)
 
+(use-package org-super-agenda
+  :ensure t
+  :after org-agenda
+  :init
+  (setq org-agenda-skip-scheduled-if-done t
+        org-agenda-skip-deadline-if-done t
+        org-agenda-include-deadlines t
+      org-agenda-block-separator nil
+      org-agenda-compact-blocks t
+      Org-agenda-start-day nil ;; i.e. today
+      org-agenda-span 1
+      org-agenda-start-on-weekday nil)
+
+  (setq org-agenda-custom-commands
+        '(("c" "Super view"
+           ((agenda "" ((org-agenda-overriding-header "")
+                        (org-super-agenda-groups
+                         '((:name "Today"
+                                  :time-grid t
+                                  :date today
+                                  :order 1)))))
+            (alltodo "" ((org-agenda-overriding-header "")
+                         (org-super-agenda-groups
+                          '((:log t)
+                            (:name "To refile"
+                                   :file-path "orgs/tickler\\.org")
+                            (:name "Next to do"
+                                   :todo "NEXT"
+                                   :order 1)
+                            (:name "Important"
+                                   :priority "A"
+                                   :order 6)
+                            (:name "Today's tasks"
+                                   :file-path "journal/")
+                            (:name "Due Today"
+                                   :deadline today
+                                   :order 2)
+                            (:name "Scheduled Soon"
+                                   :scheduled future
+                                   :order 8)
+                            (:name "Overdue"
+                                   :deadline past
+                                   :order 7)
+                            (:name "Meetings"
+                                   :and (:todo "MEET" :scheduled future)
+                                   :order 10)
+                            (:discard (:not (:todo "TODO")))))))))))
+
+  :config
+  (org-super-agenda-mode)
+  )
 (setq org-agenda-files (list "~/orgs/gtd.org" "~/orgs/code.org" "~/orgs/journal.org"))
 
 (setq org-capture-templates '(("t" "Todo [Inbox]" entry (file+headline "~/orgs/gtd.org" "Tasks")
