@@ -280,7 +280,26 @@ Very little JS TS work atm but this config isnt amazing. needs more work.
 #+RESULTS:
 : hydra-flycheck/body
 
-** SaveHist
+*** Org Mode
+#+BEGIN_SRC emacs-lisp
+
+(defhydra hydra-org (global-map "<f1>")
+  "Org"
+  ("n" org-next-visible-heading "Next Heading")
+  ("p" org-previous-visible-heading "Previous Heading")
+  ("u" outline-up-heading "Up a level")
+  ("," org-promote-subtree "Promote Subtree")
+  ("." org-demote-subtree "Demote Subtree")
+  ("t" org-todo "TODO")
+  ("1" org-priority "Priority")
+  )
+
+#+END_SRC
+
+#+RESULTS:
+: hydra-org/body
+
+*** SaveHist
 #+BEGIN_SRC emacs-lisp
   (use-package
   savehist
