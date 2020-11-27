@@ -334,11 +334,15 @@ make sure that you have pdf tools installed.
 ** Rainbow Delimiters
 #+BEGIN_SRC emacs-lisp
 
-(use-package rainbow-delimiters
+(use-package rainbow-delimiters-mode
   :defer t
   :hook '(prog-mode-hook text-mode-hook org-src-mode-hook))
 
   #+END_SRC
+
+  #+RESULTS:
+  | rainbow-delimiters-mode | rainbow-delimiters |
+
 ** DeadGrep
 ** Spaceline
 ** Yasnippet
