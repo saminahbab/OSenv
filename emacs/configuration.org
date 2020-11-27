@@ -231,6 +231,12 @@ Very little JS TS work atm but this config isnt amazing. needs more work.
 (add-hook 'terraform-mode-hook #'lsp)
 #+END_SRC
 ** gql
+#+BEGIN_SRC emacs-lisp
+(use-package graphql-mode
+  :ensure t
+  :mode "\\.graphqls?\\'")
+#+END_SRC
+
 ** Yaml
 #+BEGIN_SRC emacs-lisp
 (use-package yaml-mode
