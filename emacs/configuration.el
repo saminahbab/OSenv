@@ -86,6 +86,11 @@
 (eval-after-load 'python-mode-hook
   (lambda () (local-set-key (kbd "C-c <tab>") 'python-black-buffer)))
 
+  (use-package blacken
+    :ensure t
+    :config
+    (add-hook 'python-mode-hook 'blacken-mode))
+
 (use-package lsp-pyright
   :ensure t
   :hook (python-mode . (lambda ()
@@ -140,11 +145,49 @@
 
 (add-hook 'typescript-mode-hook #'setup-tide-mode)
 
+
+(use-package web-mode
+  :ensure t )
+
+(setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
+
+(defun web-mode-init-hook ()
+  "Hooks for Web mode.  Adjust indent."
+  (setq web-mode-markup-indent-offset 4))
+
+(add-hook 'web-mode-hook  'web-mode-init-hook)
+
+(use-package add-node-modules-path
+  :ensure t)
+(use-package prettier
+  :ensure t
+)
+
+
+(defun web-mode-init-prettier-hook ()
+  (add-node-modules-path)
+  (prettier-js-mode))
+
+(add-hook 'web-mode-hook  'web-mode-init-prettier-hook)
+
+(setq-default flycheck-disabled-checkers
+              (append flycheck-disabled-checkers
+                      '(javascript-jshint json-jsonlist)))
+
+;; Enable eslint checker for web-mode
+(flycheck-add-mode 'javascript-eslint 'web-mode)
+;; Enable flycheck globally
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
 (use-package cypher-mode
   :ensure t
   :mode "\\.cql")
 
 (add-hook 'terraform-mode-hook #'lsp)
+
+(use-package graphql-mode
+  :ensure t
+  :mode "\\.graphqls?\\'")
 
 (use-package yaml-mode
   :mode (("\\.yaml\\'" . yaml-mode)
@@ -158,6 +201,14 @@
 (global-set-key (kbd  "C-c c u") 'uncomment-region)
 (global-set-key [?\M-h] 'delete-backward-char)
 
+(use-package emmet-mode
+  :ensure t)
+
+(add-hook 'web-mode-hook 'emmet-mode)
+
+(use-package helm-emmet
+  :ensure t)
+
 (use-package hydra
   :ensure t)
 
@@ -167,6 +218,17 @@
   ("p" flycheck-previous-error "previous")
   ("f" flycheck-first-error "first")
   ("l" flycheck-list-errors "list")
+  )
+
+(defhydra hydra-org (global-map "<f1>")
+  "Org"
+  ("n" org-next-visible-heading "Next Heading")
+  ("p" org-previous-visible-heading "Previous Heading")
+  ("u" outline-up-heading "Up a level")
+  ("," org-promote-subtree "Promote Subtree")
+  ("." org-demote-subtree "Demote Subtree")
+  ("t" org-todo "TODO")
+  ("1" org-priority "Priority")
   )
 
 (use-package
@@ -189,9 +251,15 @@
   :hook ((after-init . smartparens-global-mode))
   :init (setq sp-hybrid-kill-entire-symbol nil))
 
-(use-package rainbow-delimiters
+(use-package rainbow-delimiters-mode
   :defer t
-  :hook '(prog-mode-hook text-mode-hook org-src-mode-hook))
+  :config (add-hook 'prog-mode-hook 'text-mode-hook 'org-src-mode-hook))
+
+  (use-package rainbow-mode
+    :ensure t
+    :config
+    (setq rainbow-x-colors nil)
+    (add-hook 'prog-mode-hook 'rainbow-mode))
 
 (use-package
   yasnippet
