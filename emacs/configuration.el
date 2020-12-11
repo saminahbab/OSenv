@@ -236,7 +236,22 @@
   :config (setq history-length 10000))
 (savehist-mode)
 
-(pdf-loader-install)
+(use-package pdf-tools
+   :pin manual
+   :config
+   (pdf-tools-install)
+   (setq-default pdf-view-display-size 'fit-width)
+   (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
+   :custom
+   (pdf-annot-activate-created-annotations t "automatically annotate highlights"))
+
+(setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+      TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view))
+      TeX-source-correlate-start-server t)
+
+(add-hook 'TeX-after-compilation-finished-functions
+          #'TeX-revert-document-buffer)
+(add-hook 'pdf-view-mode-hook (lambda() (linum-mode -1)))
 
 (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
 (global-set-key (kbd "M-o") 'ace-window)
@@ -391,6 +406,9 @@ company
   (add-hook 'rust-mode-hook #'lsp)
   (add-hook 'terraform-mode #'lsp))
 
+(setq lsp-sideline-show-hover t)
+(setq)
+
 (use-package
   lsp-ui
   :ensure t
@@ -399,6 +417,12 @@ company
 
 (setq lsp-ui-doc-enable t lsp-ui-peek-enable t lsp-ui-sideline-enable t lsp-ui-imenu-enable t
       lsp-ui-flycheck-enable t lsp-ui-sideline-toggle-symbols-info t)
+
+(setq lsp-ui-doc-position 'bottom)
+(setq lsp-enable-symbol-highlighting t)
+(setq lsp-lens-enable t)
+(setq lsp-modeline-code-actions-enable t)
+(setq lsp-diagnostics-provider :auto)
 
 (setq gc-cons-threshold 200000000)
 (setq read-process-output-max ( * 1024 1024) )
@@ -540,41 +564,52 @@ company
             (("C-c n a" . orb-note-actions)))
  )
 
+(add-hook 'after-init-hook #'org-roam-bibtex-mode)
+
 (setq orb-preformat-keywords   '(("citekey" . "=key=") "title" "url" "file" "author-or-editor" "keywords"))
 
   (defvar orb-title-format "${author-or-editor-abbrev} (${date}).  ${title}."
         "Format of the title to use for `orb-templates'.")
 
-
-(setq orb-templates  `(
-            ("r" "ref" plain
-            (function org-roam-capture--get-point)
-            ""
-            :file-name "refs/${citekey}"
-            :head ,(s-join "\n"
-                           (list
-                            (concat "#+title: "
-                                    orb-title-format)
-                            "#+roam_key: ${ref}"
-                            "#+created: %U"
-                            "#+last_modified: %U\n\n"))
-            :unnarrowed t)
-
-           ("n" "ref + noter" plain
-            (function org-roam-capture--get-point)
-            ""
-            :file-name "refs/${citekey}"
-            :head ,(s-join "\n"
-                           (list
-                            "#+title:${title}."
-                            "#+ROAM_TAGS:"
-                            "#+roam_key: ${ref}"
-                            ""
-                            "* Notes :noter:"
-                            ":PROPERTIES:"
-                            ":NOTER_DOCUMENT: %(orb-process-file-field \"${citekey}\")"
-                            ":NOTER_PAGE:"
-                            ":END:\n\n")))))
+(setq orb-templates
+   `(("r" "ref" plain
+      (function org-roam-capture--get-point)
+      ""
+      :file-name "refs/${citekey}"
+      :head ,(s-join "\n"
+                     (list
+                      (concat "#+title: "
+                              orb-title-format)
+                      "#+roam_key: ${ref}"
+                      "#+created: %U"
+                      "#+last_modified: %U\n\n"))
+      :unnarrowed t)
+     ("p" "ref + physical" plain
+      (function org-roam-capture--get-point)
+      ""
+      :file-name "refs/${citekey}"
+      :head ,(s-join "\n"
+                     (list
+                      (concat "#+title: "
+                              orb-title-format)
+                      "#+roam_key: ${ref}"
+                      ""
+                      "* Notes :physical:")))
+     ("n" "ref + noter" plain
+      (function org-roam-capture--get-point)
+      ""
+      :file-name "refs/${citekey}"
+      :head ,(s-join "\n"
+                     (list
+                      (concat "#+title: "
+                              orb-title-format)
+                      "#+roam_key: ${ref}"
+                      ""
+                      "* Notes :noter:"
+                      ":PROPERTIES:"
+                      ":NOTER_DOCUMENT: %(orb-process-file-field \"${citekey}\")"
+                      ":NOTER_PAGE:"
+                      ":END:"))))))
 
 (use-package org-ref
     :config
