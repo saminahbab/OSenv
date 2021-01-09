@@ -209,6 +209,11 @@
 (use-package helm-emmet
   :ensure t)
 
+(use-package forge
+  :after magit)
+
+(setq auth-sources '("~/.authinfo"))
+
 (use-package hydra
   :ensure t)
 
@@ -571,8 +576,8 @@ company
   (defvar orb-title-format "${author-or-editor-abbrev} (${date}).  ${title}."
         "Format of the title to use for `orb-templates'.")
 
-(setq orb-templates
-   `(("r" "ref" plain
+(setq orb-templates  `(
+      ("r" "ref" plain
       (function org-roam-capture--get-point)
       ""
       :file-name "refs/${citekey}"
@@ -584,32 +589,22 @@ company
                       "#+created: %U"
                       "#+last_modified: %U\n\n"))
       :unnarrowed t)
-     ("p" "ref + physical" plain
-      (function org-roam-capture--get-point)
-      ""
-      :file-name "refs/${citekey}"
-      :head ,(s-join "\n"
-                     (list
-                      (concat "#+title: "
-                              orb-title-format)
-                      "#+roam_key: ${ref}"
-                      ""
-                      "* Notes :physical:")))
+
      ("n" "ref + noter" plain
       (function org-roam-capture--get-point)
       ""
       :file-name "refs/${citekey}"
       :head ,(s-join "\n"
                      (list
-                      (concat "#+title: "
-                              orb-title-format)
+                      "#+title:${title}."
+                      "#+ROAM_TAGS:"
                       "#+roam_key: ${ref}"
                       ""
                       "* Notes :noter:"
                       ":PROPERTIES:"
                       ":NOTER_DOCUMENT: %(orb-process-file-field \"${citekey}\")"
                       ":NOTER_PAGE:"
-                      ":END:"))))))
+                      ":END:\n\n")))))
 
 (use-package org-ref
     :config
@@ -655,6 +650,9 @@ company
 :ensure t
 )
 
+(use-package org-pdftools
+  :hook (org-mode . org-pdftools-setup-link))
+
 (use-package org-noter-pdftools
   :after org-noter
   :config
@@ -674,3 +672,11 @@ company
 (require 'org-download)
 
 (use-package org-journal)
+
+(add-to-list 'auto-mode-alist '("\\.trello$" . org-mode))
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            (let ((filename (buffer-file-name (current-buffer))))
+              (when (and filename (string= "trello" (file-name-extension filename)))
+              (org-trello-mode)))))

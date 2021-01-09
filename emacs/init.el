@@ -13,8 +13,10 @@
    '("~/orgs/roam/20201112204422-database_issues.org" "~/orgs/gtd.org" "~/orgs/code.org" "~/orgs/journal.org"))
  '(org-roam-bibtex-mode t)
  '(org-roam-server-mode t)
+ '(org-trello-current-prefix-keybinding "C-c o" nil (org-trello))
  '(package-selected-packages
-   '(blacken helm-emmet emmet-mode enmet-mode prettier prettier-js-mode add-node-modules-path web-mode graphql-mode org-superstar org-super-agenda highlight-indent-guides yasnippet-snippets xterm-color use-package treemacs-projectile transpose-frame toml-mode tide terraform-mode spacemacs-theme spaceline smex smartparens smart-shift rjsx-mode ripgrep rainbow-mode rainbow-delimiters pyvenv python-black prettier-js org-roam-server org-roam-bibtex org-ref org-noter-pdftools org-journal org-download org-bullets ob-cypher markdown-preview-mode magit lsp-ui lsp-pyright lsp-docker k8s-mode jq-mode jetbrains-darcula-theme ivy-rich indium indent-tools highlight-indentation go-mode flycheck-yamllint flycheck-rust elisp-format ein doom-themes dockerfile-mode docker-compose-mode deft deadgrep dashboard cython-mode counsel-projectile company-lsp cargo buffer-move aggressive-indent aggressive-fill-paragraph)))
+   '(vterm forge curl-to-elisp org-trello ob-ipython pdf-view-restore blacken helm-emmet emmet-mode enmet-mode prettier prettier-js-mode add-node-modules-path web-mode graphql-mode org-superstar org-super-agenda highlight-indent-guides yasnippet-snippets xterm-color use-package treemacs-projectile transpose-frame toml-mode tide terraform-mode spacemacs-theme spaceline smex smartparens smart-shift rjsx-mode ripgrep rainbow-mode rainbow-delimiters pyvenv python-black prettier-js org-roam-server org-roam-bibtex org-ref org-noter-pdftools org-journal org-download org-bullets ob-cypher markdown-preview-mode magit lsp-ui lsp-pyright lsp-docker k8s-mode jq-mode jetbrains-darcula-theme ivy-rich indium indent-tools highlight-indentation go-mode flycheck-yamllint flycheck-rust elisp-format ein doom-themes dockerfile-mode docker-compose-mode deft deadgrep dashboard cython-mode counsel-projectile company-lsp cargo buffer-move aggressive-indent aggressive-fill-paragraph))
+ '(request-backend 'url-retrieve))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

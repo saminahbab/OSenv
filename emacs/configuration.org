@@ -70,6 +70,7 @@
 (show-paren-mode 1)
   #+END_SRC
 ** Theme
+
 #+BEGIN_SRC emacs-lisp
     (setq sml/no-confirm-load-theme t)
   (load-theme 'jetbrains-darcula t)
@@ -82,6 +83,19 @@
 (setq sml/no-confirm-load-theme t)
 
   #+END_SRC
+
+Getting rid of highlighting and background color of code blocks for a cleaner look.
+
+#+BEGIN_SRC emacs-lisp
+(set-face-attribute 'org-block nil
+                    :background nil )
+
+(set-face-attribute 'org-block nil
+                    :foreground nil)
+#+END_SRC
+
+#+RESULTS:
+
 ** General Pre Save
 #+BEGIN_SRC emacs-lisp
 (add-hook 'before-save-hook 'whitespace-cleanup)
@@ -332,7 +346,18 @@ Baked into VS code, pretty good snippets for jsx tags.
 
 #+RESULTS:
 
-** Hydray
+** forge
+#+BEGIN_SRC emacs-lisp
+
+(use-package forge
+  :after magit)
+
+(setq auth-sources '("~/.authinfo"))
+#+END_SRC
+
+#+RESULTS:
+
+** Hydra
 #+BEGIN_SRC emacs-lisp
 (use-package hydra
   :ensure t)
@@ -850,8 +875,8 @@ What a package. Game changer.
   (defvar orb-title-format "${author-or-editor-abbrev} (${date}).  ${title}."
         "Format of the title to use for `orb-templates'.")
 
-(setq orb-templates
-   `(("r" "ref" plain
+(setq orb-templates  `(
+      ("r" "ref" plain
       (function org-roam-capture--get-point)
       ""
       :file-name "refs/${citekey}"
@@ -863,33 +888,22 @@ What a package. Game changer.
                       "#+created: %U"
                       "#+last_modified: %U\n\n"))
       :unnarrowed t)
-     ("p" "ref + physical" plain
-      (function org-roam-capture--get-point)
-      ""
-      :file-name "refs/${citekey}"
-      :head ,(s-join "\n"
-                     (list
-                      (concat "#+title: "
-                              orb-title-format)
-                      "#+roam_key: ${ref}"
-                      ""
-                      "* Notes :physical:")))
+
      ("n" "ref + noter" plain
       (function org-roam-capture--get-point)
       ""
       :file-name "refs/${citekey}"
       :head ,(s-join "\n"
                      (list
-                      (concat "#+title: "
-                              orb-title-format)
+                      "#+title:${title}."
+                      "#+ROAM_TAGS:"
                       "#+roam_key: ${ref}"
                       ""
                       "* Notes :noter:"
                       ":PROPERTIES:"
                       ":NOTER_DOCUMENT: %(orb-process-file-field \"${citekey}\")"
                       ":NOTER_PAGE:"
-                      ":END:"))))))
-
+                      ":END:\n\n")))))
   #+END_SRC
 
   #+RESULTS:
@@ -959,6 +973,9 @@ What a package. Game changer.
 *** PDF Tools integration
 #+BEGIN_SRC emacs-lisp
 
+(use-package org-pdftools
+  :hook (org-mode . org-pdftools-setup-link))
+
 (use-package org-noter-pdftools
   :after org-noter
   :config
@@ -967,6 +984,10 @@ What a package. Game changer.
 
 
   #+END_SRC
+
+  #+RESULTS:
+  : t
+
 ** Deft
 #+BEGIN_SRC emacs-lisp
   (use-package deft
@@ -991,3 +1012,18 @@ Better than Dailies in my opinion, and also separate to your personal roam graph
 (use-package org-journal)
 
   #+END_SRC
+** Trello
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.trello$" . org-mode))
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            (let ((filename (buffer-file-name (current-buffer))))
+              (when (and filename (string= "trello" (file-name-extension filename)))
+              (org-trello-mode)))))
+
+#+END_SRC
+
+#+RESULTS:
+| (lambda nil (let ((filename (buffer-file-name (current-buffer)))) (when (and filename (string= trello (file-name-extension filename))) (org-trello-mode)))) | #[nil \301\302"\205	 \303 \207 [org-trello-files -any? #[(name) \302!	\230\207 [name buffer-file-name expand-file-name] 2] org-trello-mode] 3] | (lambda nil (let ((filename (buffer-file-name (current-buffer)))) (if (and filename (string= trello (file-name-extension filename))) (progn (org-trello-mode))))) | org-pdftools-setup-link | org-ref-org-menu | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-indent-mode | (lambda nil (org-bullets-mode 1)) | org-ref-setup-label-finders |
