@@ -20,12 +20,20 @@
 (global-set-key (kbd "C-c m") 'magit)
 (setq find-file-visit-truename t)
 
-(set-frame-font "Menlo 10" nil t)
+(set-frame-font "Hack" nil t)
 
 (setq org-src-fontify-natively t
     org-src-tab-acts-natively t
     org-confirm-babel-evaluate nil
     org-edit-src-content-indentation 0)
+
+  (setq org-hide-emphasis-markers t)
+
+
+(custom-set-faces
+'(org-block
+  ((t (:background nil))))
+ )
 
 (menu-bar-mode -1)
   (tool-bar-mode -1)
@@ -59,7 +67,13 @@
 :config
 (dashboard-setup-startup-hook))
 
-(setq org-src-block-faces '(("emacs-lisp" (:background "#EEE2FF"))))
+;;(setq org-src-block-faces '(("emacs-lisp" (:background "#EEE2FF"))))
+(setq org-src-tab-acts-natively t)
+
+(defun my-org-mode-hook ()
+  (setq-local yas-buffer-local-condition
+              '(not (org-in-src-block-p t))))
+(add-hook 'org-mode-hook #'my-org-mode-hook)
 
 (use-package toml-mode)
 
@@ -129,6 +143,8 @@
   (tide-setup)
   (flycheck-mode +1)
   (setq flycheck-check-syntax-automatically '(save mode-enabled))
+(tide-hl-identifier-mode +1)
+
   (eldoc-mode +1)
 
   ;; company is an optional dependency. You have to
@@ -154,6 +170,10 @@
 (defun web-mode-init-hook ()
   "Hooks for Web mode.  Adjust indent."
   (setq web-mode-markup-indent-offset 4))
+
+(use-package rjsx-mode
+:ensure t
+:mode "\\.js\\'")
 
 (add-hook 'web-mode-hook  'web-mode-init-hook)
 
