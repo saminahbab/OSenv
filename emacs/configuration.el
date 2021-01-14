@@ -22,26 +22,107 @@
 
 (set-frame-font "Hack" nil t)
 
+(add-hook 'org-mode-hook 'org-bullets-mode )
+(add-hook 'org-mode-hook 'variable-pitch-mode )
+
+
 (setq org-src-fontify-natively t
     org-src-tab-acts-natively t
     org-confirm-babel-evaluate nil
-    org-edit-src-content-indentation 0)
+    org-edit-src-content-indentation 0
+    org-startup-indented t
+    org-bullets-bullet-list '(" ")
+    org-pretty-entities t
+    org-hide-emphasis-markers t
+    org-hide-leading-starts t
+
+    org-ellipsis "  " ;; folding symbol
+    org-agenda-block-separator ""
+    org-fontify-whole-heading-line t
+    org-fontify-done-headline t
+    org-fontify-quote-and-verse-blocks t
+   )
 
   (setq org-hide-emphasis-markers t)
 
+(lambda () (progn
+  (setq left-margin-width 0)
+  (setq right-margin-width 0)
+  (set-window-buffer nil (current-buffer))))
 
-(custom-set-faces
-'(org-block
-  ((t (:background nil))))
- )
+(setq header-line-format "")
+
+(custom-theme-set-faces 'user '(variable-pitch ((t
+                                                 (:family "ETBembo"
+                                                          :height 130))))
+                        '(fixed-pitch ((t ( :family "Hack"
+                                            :height 90
+                                            :weight normal )))))
+
+(with-eval-after-load 'org-faces
+
+
+  (custom-set-faces '(org-document-title ((t :foreground "#1c1e1f"
+                                             :underline nil)))
+                    '(org-document-info-keyword ((t :foreground "#1c1e1f"
+                                                    :underline nil
+                                                    :inherit 'fixed-pitch
+                                                    :height 70
+                                                    :foreground  "#A0A0A0"
+                                                    :bold t)))
+                    '(org-document-info ((t :foreground "#1c1e1f")))
+                    '(org-todo ((t :background nil
+                                   :foreground  "#FB6D4C"
+                                   :inherit 'fixed-pitch)))
+                    '(org-done ((t :background nil
+                                   :foreground "#056644"
+                                   :inherit 'fixed-pitch)))
+                    '(org-link ((t :underline nil
+                                   :foreground "#759194")))
+                    '(org-level-1 ((t
+                                    (:height 1.4
+                                             :foreground "#1c1e1f"))))
+                    '(org-level-2 ((t
+                                    (:height 1.3
+                                             :foreground "#1c1e1f"))))
+                    '(org-level-3 ((t
+                                    (:height 1.2
+                                             :foreground "#1c1e1f"))))
+                    '(org-level-4 ((t
+                                    (:height 1.0
+                                             :foreground "#1c1e1f"))))
+                    '(org-level-5 ((t
+                                    (:height 1.0
+                                             :foreground "#1c1e1f"))))
+                    '(org-block-begin-line ((t
+                                             (:foreground "#787787"
+                                                          :background nil
+                                                          :inherit 'fixed-pitch
+                                                          :bold t
+                                                          :height 70))))
+                    '(org-block-end-line ((t
+                                           (:foreground "#787787"
+                                                        :background nil
+                                                        :inherit 'fixed-pitch
+                                                        :bold t
+                                                        :height 70))))
+
+                    '(org-block ((t
+                                  (:background nil
+                                               :inherit 'fixed-pitch))))
+                    '(org-meta-line ((t
+                                      (:inherit 'fixed-pitch
+                                                :bold t
+                                                :height 70
+                                                :foreground "#A0A0A0"))))))
 
 (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (setq inhibit-startup-screen t)
-  (setq inhibit-startup-echo-area-message t)
-  (setq inhibit-startup-message t)
-  (setq initial-scratch-message nil)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(setq inhibit-startup-screen t)
+(setq inhibit-startup-echo-area-message t)
+(setq inhibit-startup-message t)
+(setq initial-scratch-message nil)
 (setq-default inhibit-splash-screen t)
 
 (add-hook 'after-init-hook 'global-hl-line-mode)
@@ -49,7 +130,7 @@
 (show-paren-mode 1)
 
 (setq sml/no-confirm-load-theme t)
-  (load-theme 'jetbrains-darcula t)
+  (load-theme 'spacemacs-light t )
 
 (use-package
   spaceline
@@ -66,14 +147,6 @@
 :ensure t
 :config
 (dashboard-setup-startup-hook))
-
-;;(setq org-src-block-faces '(("emacs-lisp" (:background "#EEE2FF"))))
-(setq org-src-tab-acts-natively t)
-
-(defun my-org-mode-hook ()
-  (setq-local yas-buffer-local-condition
-              '(not (org-in-src-block-p t))))
-(add-hook 'org-mode-hook #'my-org-mode-hook)
 
 (use-package toml-mode)
 
@@ -459,8 +532,7 @@ company
 
 (use-package smex)
 
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-(add-hook 'org-mode-hook 'org-indent-mode)
+;; (setq org-format-latex-options (plist-put org-format-latex-options :scale 3.5 ))
 
 (use-package org-super-agenda
   :ensure t
@@ -655,20 +727,59 @@ company
 (require 'org-roam-protocol)
 
 (use-package org-noter
-:after (:any org pdf-view)
-:config
-(setq
- ;; Please stop opening frames
- org-noter-always-create-frame nil
- ;; I want to see the whole file
- org-noter-hide-other t
- ;; Everything is relative to the main notes file
- org-noter-notes-search-path "~/orgs/"
+  :after (:any org pdf-view)
+  :config
 
- org-noter-auto-save-last-location nil
- )
-:ensure t
-)
+(require 'org-noter-pdftools)
+  (setq
+   ;; Please stop opening frames
+   org-noter-always-create-frame nil
+   ;; I want to see the whole file
+   org-noter-hide-other t
+   ;; Everything is relative to the main notes file
+   org-noter-notes-search-path "~/orgs/"
+
+   org-noter-auto-save-last-location nil
+   )
+  :ensure t
+  )
+
+(use-package org-pdftools
+  :hook (org-mode . org-pdftools-setup-link))
+
+
+(use-package org-noter-pdftools
+  :after org-noter
+  :config
+  ;; Add a function to ensure precise note is inserted
+  (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
+    (interactive "P")
+    (org-noter--with-valid-session
+     (let ((org-noter-insert-note-no-questions (if toggle-no-questions
+                                                   (not org-noter-insert-note-no-questions)
+                                                 org-noter-insert-note-no-questions))
+           (org-pdftools-use-isearch-link t)
+           (org-pdftools-use-freestyle-annot t))
+       (org-noter-insert-note (org-noter--get-precise-info)))))
+
+  ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
+  (defun org-noter-set-start-location (&optional arg)
+    "When opening a session with this document, go to the current location.
+With a prefix ARG, remove start location."
+    (interactive "P")
+    (org-noter--with-valid-session
+     (let ((inhibit-read-only t)
+           (ast (org-noter--parse-root))
+           (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
+       (with-current-buffer (org-noter--session-notes-buffer session)
+         (org-with-wide-buffer
+          (goto-char (org-element-property :begin ast))
+          (if arg
+              (org-entry-delete nil org-noter-property-note-location)
+            (org-entry-put nil org-noter-property-note-location
+                           (org-noter--pretty-print-location location))))))))
+  (with-eval-after-load 'pdf-annot
+    (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
 (use-package org-pdftools
   :hook (org-mode . org-pdftools-setup-link))
@@ -695,8 +806,4 @@ company
 
 (add-to-list 'auto-mode-alist '("\\.trello$" . org-mode))
 
-(add-hook 'org-mode-hook
-          (lambda ()
-            (let ((filename (buffer-file-name (current-buffer))))
-              (when (and filename (string= "trello" (file-name-extension filename)))
-              (org-trello-mode)))))
+(custom-set-variables '(org-trello-files '("~/orgs/am4.trello")))
