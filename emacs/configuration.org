@@ -445,8 +445,20 @@ Mainly for React work.
 ** Terraform
 #+BEGIN_SRC emacs-lisp
 
+(lsp-register-client
+ (make-lsp-client :new-connection (lsp-stdio-connection '("terraform-ls" "serve"))
+                  :major-modes '(terraform-mode)
+                  :server-id 'terraform-ls))
+
+
 (add-hook 'terraform-mode-hook #'lsp)
+
+
 #+END_SRC
+
+#+RESULTS:
+| lsp |
+
 ** gql
 #+BEGIN_SRC emacs-lisp
 (use-package graphql-mode
