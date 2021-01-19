@@ -15,6 +15,12 @@
 
 (setq create-lockfiles nil)
 
+;; store all backup and autosave files in the tmp dir
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+
 (setq find-file-visit-truename t)
 (setq backup-directory-alist '(("." . "~/.saves")))
 (global-set-key (kbd "C-c m") 'magit)

@@ -35,8 +35,17 @@
 ** Don't use lock files (which clutter view of a directory)
 
 #+BEGIN_SRC emacs-lisp
-  (setq create-lockfiles nil)
+(setq create-lockfiles nil)
+
+;; store all backup and autosave files in the tmp dir
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
 #+END_SRC
+
+#+RESULTS:
+| .* | /tmp/ | t |
 
 ** Other
 
