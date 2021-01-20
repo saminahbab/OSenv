@@ -820,6 +820,7 @@ With a prefix ARG, remove start location."
              jupyter-server-list-kernels))
 
 (org-babel-jupyter-override-src-block "python")
+(setq jupyter-eval-use-overlays t)
 
 (use-package ob
   :ensure nil

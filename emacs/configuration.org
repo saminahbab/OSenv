@@ -1243,10 +1243,12 @@ Better than Dailies in my opinion, and also separate to your personal roam graph
              jupyter-server-list-kernels))
 
 (org-babel-jupyter-override-src-block "python")
+(setq jupyter-eval-use-overlays 1)
 
 #+END_SRC
 
 #+RESULTS:
+: 1
 ** Babel
 #+BEGIN_SRC emacs-lisp
 (use-package ob
