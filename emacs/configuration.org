@@ -35,17 +35,8 @@
 ** Don't use lock files (which clutter view of a directory)
 
 #+BEGIN_SRC emacs-lisp
-(setq create-lockfiles nil)
-
-;; store all backup and autosave files in the tmp dir
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
+  (setq create-lockfiles nil)
 #+END_SRC
-
-#+RESULTS:
-| .* | /tmp/ | t |
 
 ** Other
 
@@ -1244,3 +1235,28 @@ Better than Dailies in my opinion, and also separate to your personal roam graph
 #+END_SRC
 
 #+RESULTS:
+** Jupyter
+#+BEGIN_SRC emacs-lisp
+(use-package jupyter
+  :commands (jupyter-run-server-repl
+             jupyter-run-repl
+             jupyter-server-list-kernels))
+
+(org-babel-jupyter-override-src-block "python")
+
+#+END_SRC
+
+#+RESULTS:
+** Babel
+#+BEGIN_SRC emacs-lisp
+(use-package ob
+  :ensure nil
+  :config (progn
+            (org-babel-do-load-languages
+             'org-babel-load-languages
+             '((python . t)
+               (jupyter . t)))))
+#+END_SRC
+
+#+RESULTS:
+: t
