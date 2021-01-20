@@ -15,12 +15,6 @@
 
 (setq create-lockfiles nil)
 
-;; store all backup and autosave files in the tmp dir
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-
 (setq find-file-visit-truename t)
 (setq backup-directory-alist '(("." . "~/.saves")))
 (global-set-key (kbd "C-c m") 'magit)
@@ -819,3 +813,18 @@ With a prefix ARG, remove start location."
 (add-to-list 'auto-mode-alist '("\\.trello$" . org-mode))
 
 (custom-set-variables '(org-trello-files '("~/orgs/am4.trello")))
+
+(use-package jupyter
+  :commands (jupyter-run-server-repl
+             jupyter-run-repl
+             jupyter-server-list-kernels))
+
+(org-babel-jupyter-override-src-block "python")
+
+(use-package ob
+  :ensure nil
+  :config (progn
+            (org-babel-do-load-languages
+             'org-babel-load-languages
+             '((python . t)
+               (jupyter . t)))))
