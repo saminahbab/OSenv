@@ -636,7 +636,7 @@ make sure that you have pdf tools installed.
   yasnippet
   :ensure t
   :init (yas-global-mode 1)
-  :bind (("C-c ]" . yas-expand-from-trigger-key))
+  :bind (("<f8>" . yas-expand-from-trigger-key))
   :config (use-package
             yasnippet-snippets
             :ensure t)
@@ -645,6 +645,10 @@ make sure that you have pdf tools installed.
                                '("snippets")))
 
 #+END_SRC
+
+#+RESULTS:
+| /home/samin/.emacs.d/snippets | yasnippet-snippets-dir | snippets | snippets | snippets | snippets |
+
 ** Company
 #+BEGIN_SRC emacs-lisp
 (use-package
@@ -1242,7 +1246,7 @@ Better than Dailies in my opinion, and also separate to your personal roam graph
              jupyter-run-repl
              jupyter-server-list-kernels))
 
-(org-babel-jupyter-override-src-block "python")
+(setq org-babel-jupyter-override-src-block "python")
 (setq jupyter-eval-use-overlays 1)
 
 #+END_SRC
@@ -1262,3 +1266,23 @@ Better than Dailies in my opinion, and also separate to your personal roam graph
 
 #+RESULTS:
 : t
+** Publish
+#+BEGIN_SRC emacs-lisp
+(setq org-publish-project-alist
+  '(("html"
+     :base-directory "~/org/"
+     :base-extension "org"
+     :publishing-directory "~/org-exports/"
+     :publishing-function org-publish-org-to-html)
+    ("pdf"
+     :base-directory "~/org/"
+     :base-extension "org"
+     :publishing-directory "~/org-exports/"
+     :publishing-function org-publish-org-to-pdf)
+    ("all" :components ("html" "pdf"))))
+#+END_SRC
+
+#+RESULTS:
+| html | :base-directory | ~/org/     | :base-extension | org | :publishing-directory | ~/org-exports/ | :publishing-function | org-publish-org-to-html |
+| pdf  | :base-directory | ~/org/     | :base-extension | org | :publishing-directory | ~/org-exports/ | :publishing-function | org-publish-org-to-pdf  |
+| all  | :components     | (html pdf) |                 |     |                       |                |                      |                         |

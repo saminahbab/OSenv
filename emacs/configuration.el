@@ -384,7 +384,7 @@
   yasnippet
   :ensure t
   :init (yas-global-mode 1)
-  :bind (("C-c ]" . yas-expand-from-trigger-key))
+  :bind (("<f8>" . yas-expand-from-trigger-key))
   :config (use-package
             yasnippet-snippets
             :ensure t)
@@ -819,8 +819,8 @@ With a prefix ARG, remove start location."
              jupyter-run-repl
              jupyter-server-list-kernels))
 
-(org-babel-jupyter-override-src-block "python")
-(setq jupyter-eval-use-overlays t)
+(setq org-babel-jupyter-override-src-block "python")
+(setq jupyter-eval-use-overlays 1)
 
 (use-package ob
   :ensure nil
@@ -829,3 +829,16 @@ With a prefix ARG, remove start location."
              'org-babel-load-languages
              '((python . t)
                (jupyter . t)))))
+
+(setq org-publish-project-alist
+  '(("html"
+     :base-directory "~/org/"
+     :base-extension "org"
+     :publishing-directory "~/org-exports/"
+     :publishing-function org-publish-org-to-html)
+    ("pdf"
+     :base-directory "~/org/"
+     :base-extension "org"
+     :publishing-directory "~/org-exports/"
+     :publishing-function org-publish-org-to-pdf)
+    ("all" :components ("html" "pdf"))))
