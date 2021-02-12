@@ -14,6 +14,7 @@
 (package-refresh-contents)
 
 (setq create-lockfiles nil)
+(setq backup-directory-alist `(("." . "~/.saves")))
 
 (setq find-file-visit-truename t)
 (setq backup-directory-alist '(("." . "~/.saves")))
@@ -299,6 +300,7 @@
 (global-set-key (kbd "C-c c r" ) 'comment-region)
 (global-set-key (kbd  "C-c c u") 'uncomment-region)
 (global-set-key [?\M-h] 'delete-backward-char)
+(global-set-key (kbd "<f7>") 'vterm)
 
 (use-package emmet-mode
   :ensure t)
@@ -735,6 +737,23 @@ company
 (use-package org-noter
   :after (:any org pdf-view)
   :config
+(pdf-tools-install)
+
+ (defun zp/org-noter-indirect (arg)
+    "Ensure that org-noter starts in an indirect buffer.
+Without this wrapper, org-noter creates a direct buffer
+restricted to the notes, but this causes problems with the refile
+system.  Namely, the notes buffer gets identified as an
+agenda-files buffer.
+This wrapper addresses it by having org-noter act on an indirect
+buffer, thereby propagating the indirectness."
+    (interactive "P")
+    (if (org-entry-get nil org-noter-property-doc-file)
+        (with-selected-window (zp/org-tree-to-indirect-buffer-folded nil t)
+          (org-noter arg)
+          (kill-buffer))
+      (org-noter arg)))
+
 
 (require 'org-noter-pdftools)
   (setq
@@ -752,7 +771,6 @@ company
 
 (use-package org-pdftools
   :hook (org-mode . org-pdftools-setup-link))
-
 
 (use-package org-noter-pdftools
   :after org-noter
@@ -787,14 +805,14 @@ With a prefix ARG, remove start location."
   (with-eval-after-load 'pdf-annot
     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
-(use-package org-pdftools
-  :hook (org-mode . org-pdftools-setup-link))
+;; (use-package org-pdftools
+;;   :hook (org-mode . org-pdftools-setup-link))
 
-(use-package org-noter-pdftools
-  :after org-noter
-  :config
-  (with-eval-after-load 'pdf-annot
-    (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+;; (use-package org-noter-pdftools
+;;   :after org-noter
+;;   :config
+;;   (with-eval-after-load 'pdf-annot
+;;     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
 (use-package deft
     :after org
