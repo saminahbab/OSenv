@@ -1309,3 +1309,24 @@ Better than Dailies in my opinion, and also separate to your personal roam graph
 | html | :base-directory | ~/org/     | :base-extension | org | :publishing-directory | ~/org-exports/ | :publishing-function | org-publish-org-to-html |
 | pdf  | :base-directory | ~/org/     | :base-extension | org | :publishing-directory | ~/org-exports/ | :publishing-function | org-publish-org-to-pdf  |
 | all  | :components     | (html pdf) |                 |     |                       |                |                      |                         |
+** Xournal-PP
+For note taking with a tablet and integrating them with my Org Mode workflow.
+#+BEGIN_SRC emacs-lisp
+(quelpa
+ '(quelpa-use-package
+   :fetcher git
+   :url "https://github.com/quelpa/quelpa-use-package.git"))
+(require 'quelpa-use-package)
+
+(
+ use-package org-xournalpp
+             :ensure t
+             :quelpa (org-xournalpp :fetcher gitlab :repo "vherrmann/org-xournalpp" :files ("*.el" "resources"))
+             :config
+             (add-hook 'org-mode-hook 'org-xournalpp-mode)
+
+ )
+#+END_SRC
+
+#+RESULTS:
+: t
