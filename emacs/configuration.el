@@ -860,3 +860,18 @@ With a prefix ARG, remove start location."
      :publishing-directory "~/org-exports/"
      :publishing-function org-publish-org-to-pdf)
     ("all" :components ("html" "pdf"))))
+
+(quelpa
+ '(quelpa-use-package
+   :fetcher git
+   :url "https://github.com/quelpa/quelpa-use-package.git"))
+(require 'quelpa-use-package)
+
+(
+ use-package org-xournalpp
+             :ensure t
+             :quelpa (org-xournalpp :fetcher gitlab :repo "vherrmann/org-xournalpp" :files ("*.el" "resources"))
+             :config
+             (add-hook 'org-mode-hook 'org-xournalpp-mode)
+
+ )
