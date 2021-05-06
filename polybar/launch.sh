@@ -6,12 +6,10 @@ while pgrep -u $UID -x polybar >/dev/null; do sleep 1; done
 
 # Launch Polybar, using default config location ~/.config/polybar/config
 
-MONITOR=DisplayPort-2 polybar -c config launcher
-MONITOR=DisplayPort-2 polybar -c config center
-MONITOR=DisplayPort-2 polybar -c config date
 
-MONITOR=DisplayPort-1 polybar -c config launcher
-MONITOR=DisplayPort-1 polybar -c config center
-MONITOR=DisplayPort-1 polybar -c config date
+MONITOR=DisplayPort-2 polybar -c config main
+
+
+MONITOR=DisplayPort-1 polybar -c config main
 
 echo "Polybar launched..."
