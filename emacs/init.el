@@ -18,7 +18,7 @@
  '(org-trello-current-prefix-keybinding "C-c o" nil (org-trello))
  '(org-trello-files '("~/orgs/am4.trello") nil (org-trello))
  '(package-selected-packages
-   '(org-xournalpp quelpa-use-package kubernetes org org-journal imenu-anywhere format-all emojify mood-line bash-completion org-noter org-noter-pdftools org-pdftools org-ref ob org-babel-eval-in-repl jupyter forge magit writeroom-mode mixed-pitch nordless-theme nord-theme vterm curl-to-elisp org-trello ob-ipython blacken helm-emmet emmet-mode enmet-mode prettier prettier-js-mode add-node-modules-path web-mode graphql-mode highlight-indent-guides yasnippet-snippets xterm-color use-package treemacs-projectile transpose-frame toml-mode tide terraform-mode spacemacs-theme spaceline smex smartparens smart-shift rjsx-mode ripgrep rainbow-mode rainbow-delimiters pyvenv python-black prettier-js org-roam-server org-roam-bibtex org-download org-bullets ob-cypher markdown-preview-mode lsp-ui lsp-pyright lsp-docker k8s-mode jq-mode jetbrains-darcula-theme ivy-rich indium indent-tools highlight-indentation go-mode flycheck-yamllint flycheck-rust elisp-format ein doom-themes dockerfile-mode docker-compose-mode deft deadgrep dashboard cython-mode counsel-projectile company-lsp cargo buffer-move aggressive-indent aggressive-fill-paragraph))
+   '(lsp-origami origami org-journal-list lsp-tailwindcss lsp-treemacs org-xournalpp quelpa-use-package kubernetes org org-journal imenu-anywhere format-all emojify mood-line bash-completion org-noter org-noter-pdftools org-pdftools org-ref ob org-babel-eval-in-repl jupyter forge magit writeroom-mode mixed-pitch nordless-theme nord-theme vterm curl-to-elisp org-trello ob-ipython blacken helm-emmet emmet-mode enmet-mode prettier prettier-js-mode add-node-modules-path web-mode graphql-mode highlight-indent-guides yasnippet-snippets xterm-color use-package treemacs-projectile transpose-frame toml-mode tide terraform-mode spacemacs-theme spaceline smex smartparens smart-shift rjsx-mode ripgrep rainbow-mode rainbow-delimiters pyvenv python-black prettier-js org-roam-server org-roam-bibtex org-download org-bullets ob-cypher markdown-preview-mode lsp-ui lsp-pyright lsp-docker k8s-mode jq-mode jetbrains-darcula-theme ivy-rich indium indent-tools highlight-indentation go-mode flycheck-yamllint flycheck-rust elisp-format ein doom-themes dockerfile-mode docker-compose-mode deft deadgrep dashboard cython-mode counsel-projectile company-lsp cargo buffer-move aggressive-indent aggressive-fill-paragraph))
  '(request-backend 'url-retrieve))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -26,6 +26,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(fixed-pitch ((t (:family "Hack" :height 90 :weight normal))))
+ '(lsp-ui-sideline-code-action ((t (:foreground "light coral"))))
  '(org-block ((t (:background nil :inherit 'fixed-pitch))))
  '(org-block-begin-line ((t (:foreground "#787787" :background nil :inherit 'fixed-pitch :bold t :height 70))))
  '(org-block-end-line ((t (:foreground "#787787" :background nil :inherit 'fixed-pitch :bold t :height 70))))

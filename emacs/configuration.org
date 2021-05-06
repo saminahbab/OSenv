@@ -1278,7 +1278,8 @@ Better than Dailies in my opinion, and also separate to your personal roam graph
 : 1
 ** Babel
 #+BEGIN_SRC emacs-lisp
-(use-package ob
+(use-package jupyter
+
   :ensure nil
   :config (progn
             (org-babel-do-load-languages
