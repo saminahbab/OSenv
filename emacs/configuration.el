@@ -251,6 +251,17 @@
 
 (add-hook 'web-mode-hook  'web-mode-init-hook)
 
+(add-hook 'js2-mode-hook #'setup-tide-mode)
+
+
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
+(add-hook 'web-mode-hook
+          (lambda ()
+            (when (string-equal "jsx" (file-name-extension buffer-file-name))
+              (setup-tide-mode))))
+;; configure jsx-tide checker to run after your default jsx checker
+(flycheck-add-mode 'javascript-eslint 'web-mode)
+
 (use-package add-node-modules-path
   :ensure t)
 (use-package prettier
@@ -840,7 +851,8 @@ With a prefix ARG, remove start location."
 (setq org-babel-jupyter-override-src-block "python")
 (setq jupyter-eval-use-overlays 1)
 
-(use-package ob
+(use-package jupyter
+
   :ensure nil
   :config (progn
             (org-babel-do-load-languages

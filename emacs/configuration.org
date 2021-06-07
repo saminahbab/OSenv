@@ -398,11 +398,20 @@ Mainly for React work.
 
 (add-hook 'web-mode-hook  'web-mode-init-hook)
 
+(add-hook 'js2-mode-hook #'setup-tide-mode)
 
+
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
+(add-hook 'web-mode-hook
+          (lambda ()
+            (when (string-equal "jsx" (file-name-extension buffer-file-name))
+              (setup-tide-mode))))
+;; configure jsx-tide checker to run after your default jsx checker
+(flycheck-add-mode 'javascript-eslint 'web-mode)
 #+END_SRC
 
 #+RESULTS:
-| emmet-mode | web-mode-init-prettier-hook | web-mode-init-hook |
+| javascript-tide | jsx-tide |
 
 *** Prettier
 #+BEGIN_SRC emacs-lisp
@@ -485,7 +494,7 @@ Mainly for React work.
 * Key Remaps
 
 #+BEGIN_SRC emacs-lisp
-  (define-key global-map (kbd "M-k") 'kill-this-buffer)
+(define-key global-map (kbd "M-k") 'kill-this-buffer)
 (global-set-key (kbd "C-z") 'undo)
 (global-set-key (kbd "C-c c r" ) 'comment-region)
 (global-set-key (kbd  "C-c c u") 'uncomment-region)
@@ -870,49 +879,49 @@ Things to consider, we could have the LSP UI doc disables and then just have a k
   #+END_SRC
 * Jira
 
-#+BEGIN_SRC emacs-lisp
+# #+BEGIN_SRC emacs-lisp
 
 
-(use-package ejira
-  :init
-  (setq jiralib2-url              "https://jira.mycorp.com"
-        jiralib2-auth             'basic
-        jiralib2-user-login-name  "my-jira-username"
-        jiralib2-token            nil
+# (use-package ejira
+#   :init
+#   (setq jiralib2-url              "https://jira.mycorp.com"
+#         jiralib2-auth             'basic
+#         jiralib2-user-login-name  "my-jira-username"
+#         jiralib2-token            nil
 
-        ejira-org-directory       "~/jira"
-        ejira-projects            '("EJ" "JL2")
+#         ejira-org-directory       "~/jira"
+#         ejira-projects            '("EJ" "JL2")
 
-        ejira-priorities-alist    '(("Highest" . ?A)
-                                    ("High"    . ?B)
-                                    ("Medium"  . ?C)
-                                    ("Low"     . ?D)
-                                    ("Lowest"  . ?E))
-        ejira-todo-states-alist   '(("To Do"       . 1)
-                                    ("In Progress" . 2)
-                                    ("Done"        . 3)))
-  :config
-  ;; Tries to auto-set custom fields by looking into /editmeta
-  ;; of an issue and an epic.
-  (add-hook 'jiralib2-post-login-hook #'ejira-guess-epic-sprint-fields)
+#         ejira-priorities-alist    '(("Highest" . ?A)
+#                                     ("High"    . ?B)
+#                                     ("Medium"  . ?C)
+#                                     ("Low"     . ?D)
+#                                     ("Lowest"  . ?E))
+#         ejira-todo-states-alist   '(("To Do"       . 1)
+#                                     ("In Progress" . 2)
+#                                     ("Done"        . 3)))
+#   :config
+#   ;; Tries to auto-set custom fields by looking into /editmeta
+#   ;; of an issue and an epic.
+#   (add-hook 'jiralib2-post-login-hook #'ejira-guess-epic-sprint-fields)
 
-  ;; They can also be set manually if autoconfigure is not used.
-  ;; (setq ejira-sprint-field       'customfield_10001
-  ;;       ejira-epic-field         'customfield_10002
-  ;;       ejira-epic-summary-field 'customfield_10004)
+#   ;; They can also be set manually if autoconfigure is not used.
+#   ;; (setq ejira-sprint-field       'customfield_10001
+#   ;;       ejira-epic-field         'customfield_10002
+#   ;;       ejira-epic-summary-field 'customfield_10004)
 
-  (require 'ejira-agenda)
+#   (require 'ejira-agenda)
 
-  ;; Make the issues visisble in your agenda by adding `ejira-org-directory'
-  ;; into your `org-agenda-files'.
-  (add-to-list 'org-agenda-files ejira-org-directory)
+#   ;; Make the issues visisble in your agenda by adding `ejira-org-directory'
+#   ;; into your `org-agenda-files'.
+#   (add-to-list 'org-agenda-files ejira-org-directory)
 
-  ;; Add an agenda view to browse the issues that
-  (org-add-agenda-custom-command
-   '("j" "My JIRA issues"
-     ((ejira-jql "resolution = unresolved and assignee = currentUser()"
-                 ((org-agenda-overriding-header "Assigned to me")))))))
-#+END_SRC
+#   ;; Add an agenda view to browse the issues that
+#   (org-add-agenda-custom-command
+#    '("j" "My JIRA issues"
+#      ((ejira-jql "resolution = unresolved and assignee = currentUser()"
+#                  ((org-agenda-overriding-header "Assigned to me")))))))
+# #+END_SRC
 
 #+RESULTS:
 : t
